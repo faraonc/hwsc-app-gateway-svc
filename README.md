@@ -1,5 +1,5 @@
 # Humpback Whale Social Call
-[Official HWSC Web Application](https://faraonc.github.io/hwsc-gateway-svc/)
+[Official HWSC Web Application](https://hwsc-org.github.io/hwsc-app-gateway-svc/)
 
 ## Overview
 The project is a web application that biologists can use to consolidate and to track data about humpback whales and other marine mammals. These data includes media files and source codes that biologists use for their research.
