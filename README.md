@@ -11,36 +11,29 @@ The web application is client-rendering, therefore an added initial time is adde
 
 ## Microservices
 Each microservice corresponds to specific functionality. This enables the usage of containers for deployment later on.
-### Application Gateway
+
+### [Application Gateway](https://github.com/hwsc-org/hwsc-app-gateway-svc)
 Services the user as the gateway, and the middleware between services.
-- [hwsc-app-gateway-svc](https://github.com/hwsc-org/hwsc-app-gateway-svc)
 
-### Frontend Service
+### [Frontend Service](https://github.com/hwsc-org/hwsc-frontend)
 Handles graphical user interface for Vue components.
-- [hwsc-frontend](https://github.com/hwsc-org/hwsc-frontend)
 
-### User Service
+### [User Service](https://github.com/hwsc-org/hwsc-user-svc)
 Provides services to hwsc-app-gateway-svc for managing HWSC users.
-- [hwsc-user-svc](https://github.com/hwsc-org/hwsc-user-svc)
 
-### File Transaction Service
+### [File Transaction Service](https://github.com/hwsc-org/hwsc-file-transaction-svc)
 Provides services to hwsc-app-gateway-svc for managing files.
-- [hwsc-file-transaction-svc](https://github.com/hwsc-org/hwsc-file-transaction-svc)
 
-### Document Service
+### [Document Service](https://github.com/hwsc-org/hwsc-document-svc)
  Provides services to hwsc-app-gateway-svc for CRUD of documents and file metadata in Azure CosmosDB.
-- [hwsc-document-svc](https://github.com/hwsc-org/hwsc-document-svc)
 
-### Tutorial gRPC Service in GoLang
-- [hwsc-grpc-sample-svc](https://github.com/hwsc-org/hwsc-grpc-sample-svc)
+### [Tutorial for gRPC Service & Docker in GoLang](https://github.com/hwsc-org/hwsc-grpc-sample-svc)
 
-### API
+### [API](https://github.com/hwsc-org/hwsc-api-blocks)
 API for hwsc-app-gateway-svc to consume various hwsc services.
-- [hwsc-api-blocks](https://github.com/hwsc-org/hwsc-api-blocks)
 
-### Logger
+### [Logger](https://github.com/hwsc-org/hwsc-logger)
 Utility for logging in services.
-- [hwsc-logger](https://github.com/hwsc-org/hwsc-logger)
 
 ## Team 
 ### Owners
