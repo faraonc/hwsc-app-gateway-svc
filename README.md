@@ -34,12 +34,12 @@ Provides services to hwsc-app-gateway-svc for managing files.
 ### Tutorial gRPC Service in GoLang
 - [hwsc-grpc-sample-svc](https://github.com/hwsc-org/hwsc-grpc-sample-svc)
 
-## API
+### API
 API for hwsc-app-gateway-svc to consume various hwsc services.
 - [hwsc-api-blocks](https://github.com/hwsc-org/hwsc-api-blocks)
 
-## Logger
-Utility for logging in services
+### Logger
+Utility for logging in services.
 - [hwsc-logger](https://github.com/hwsc-org/hwsc-logger)
 
 ## Team 
