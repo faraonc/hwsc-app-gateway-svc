@@ -2,14 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  digest = "1:f11d8f7500d34a2573faff781685dda0fbd3b5a33d3b53d5c3c30dbec6a35d6e"
-  name = "github.com/hwsc-org/hwsc-api-blocks"
-  packages = ["int/hwsc-app-gateway-svc/proto"]
-  pruneopts = "UT"
-  revision = "7d83eb0d026575d42bfd6ae490b7748027f84414"
-
-[[projects]]
   digest = "1:4c0989ca0bcd10799064318923b9bc2db6b4d6338dd75f3f2d86c3511aaaf5cf"
   name = "github.com/golang/protobuf"
   packages = [
@@ -22,6 +14,14 @@
   pruneopts = "UT"
   revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
   version = "v1.2.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:f11d8f7500d34a2573faff781685dda0fbd3b5a33d3b53d5c3c30dbec6a35d6e"
+  name = "github.com/hwsc-org/hwsc-api-blocks"
+  packages = ["int/hwsc-app-gateway-svc/proto"]
+  pruneopts = "UT"
+  revision = "7d83eb0d026575d42bfd6ae490b7748027f84414"
 
 [[projects]]
   branch = "master"
@@ -118,7 +118,9 @@
   analyzer-version = 1
   input-imports = [
     "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto",
+    "golang.org/x/net/context",
     "google.golang.org/grpc",
+    "google.golang.org/grpc/codes",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
