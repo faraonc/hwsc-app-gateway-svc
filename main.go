@@ -1,8 +1,8 @@
 package main
 
 import (
-	pb "github.com/faraonc/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
-	svc "github.com/faraonc/hwsc-app-gateway-svc/service"
+	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
+	svc "github.com/hwsc-org/hwsc-app-gateway-svc/service"
 	"google.golang.org/grpc"
 	"log"
 	"net"
