@@ -2,7 +2,7 @@ package service
 
 import (
 	"fmt"
-	pb "github.com/faraonc/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
+	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 )

@@ -4,7 +4,7 @@
 [[projects]]
   branch = "master"
   digest = "1:f11d8f7500d34a2573faff781685dda0fbd3b5a33d3b53d5c3c30dbec6a35d6e"
-  name = "github.com/faraonc/hwsc-api-blocks"
+  name = "github.com/hwsc-org/hwsc-api-blocks"
   packages = ["int/hwsc-app-gateway-svc/proto"]
   pruneopts = "UT"
   revision = "7d83eb0d026575d42bfd6ae490b7748027f84414"
@@ -117,7 +117,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/faraonc/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto",
+    "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto",
     "google.golang.org/grpc",
   ]
   solver-name = "gps-cdcl"
