@@ -14,23 +14,30 @@ Each microservice corresponds to specific functionality. This enables the usage 
 ### Application Gateway
 Services the user as the gateway, and the middleware between services.
 - [hwsc-app-gateway-svc](https://github.com/hwsc-org/hwsc-app-gateway-svc)
+
 ### Frontend Service
 Handles graphical user interface for Vue components.
 - [hwsc-frontend](https://github.com/hwsc-org/hwsc-frontend)
+
 ### User Service
 Provides services to hwsc-app-gateway-svc for managing HWSC users.
 - [hwsc-user-svc](https://github.com/hwsc-org/hwsc-user-svc)
+
 ### File Transaction Service
 Provides services to hwsc-app-gateway-svc for managing files.
 - [hwsc-file-transaction-svc](https://github.com/hwsc-org/hwsc-file-transaction-svc)
+
 ### Document Service
  Provides services to hwsc-app-gateway-svc for CRUD of documents and file metadata in Azure CosmosDB.
 - [hwsc-document-svc](https://github.com/hwsc-org/hwsc-document-svc)
+
 ### Tutorial gRPC Service in GoLang
 - [hwsc-grpc-sample-svc](https://github.com/hwsc-org/hwsc-grpc-sample-svc)
+
 ## API
 API for hwsc-app-gateway-svc to consume various hwsc services.
 - [hwsc-api-blocks](https://github.com/hwsc-org/hwsc-api-blocks)
+
 ## Logger
 Utility for logging in services
 - [hwsc-logger](https://github.com/hwsc-org/hwsc-logger)
