@@ -32,6 +32,9 @@ Provides services to hwsc-app-gateway-svc for managing files.
 ### [API](https://github.com/hwsc-org/hwsc-api-blocks)
 API for hwsc-app-gateway-svc to consume various hwsc services.
 
+### [DevOps](https://github.com/hwsc-org/hwsc-dev-ops)
+Resources for managing our services.
+
 ### [Logger](https://github.com/hwsc-org/hwsc-logger)
 Utility for logging in services.
 
