@@ -54,7 +54,7 @@ Utility for logging in services.
 - Wai
 
 ## Links
-- [Q1 Website](https://hwss.azurewebsites.net/#/)
+~~- [Q1 Website](https://hwss.azurewebsites.net/#/)~~
 - [Team Google Drive](https://drive.google.com/drive/folders/13vJqlP3PRIZJMuMC0tfnGKSoOrWuMX4W)
 - [Udemy](https://www.udemy.com/)
 - [Vue JS](https://vuejs.org/)
