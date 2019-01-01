@@ -25,7 +25,7 @@ Provides services to hwsc-app-gateway-svc for managing HWSC users.
 Provides services to hwsc-app-gateway-svc for managing files.
 
 ### [Document Service](https://github.com/hwsc-org/hwsc-document-svc)
- Provides services to hwsc-app-gateway-svc for CRUD of documents and file metadata in Azure CosmosDB.
+ Provides services to hwsc-app-gateway-svc for CRUD of documents and file metadata in MongoDB.
 
 ### [Tutorial for gRPC Service & Docker in GoLang](https://github.com/hwsc-org/hwsc-grpc-sample-svc)
 
