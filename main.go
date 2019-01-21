@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	log.Println("[INFO] hwsc-app-gateway initiating...")
+	log.Println("[INFO] hwsc-app-gateway-svc initiating...")
 
 	// make TCP listener
-	lis, err := net.Listen("tcp", "localhost:50051")
+	lis, err := net.Listen("tcp", "localhost:50055")
 	if err != nil {
 		// log.Fatalf will print message to console, then crashes the program
 		// %v is the value in a default format
@@ -23,8 +23,8 @@ func main() {
 	s := grpc.NewServer()
 
 	// implement services in /service/service.go
-	pb.RegisterAppGatewayServiceServer(s, svc.Service{})
-	log.Println("[INFO] hwsc-app-gateway-svc at localhost: 50051...")
+	pb.RegisterAppGatewayServiceServer(s, &svc.Service{})
+	log.Println("[INFO] hwsc-app-gateway-svc at localhost: 50055...")
 
 	// start gRPC server
 	if err := s.Serve(lis); err != nil {
