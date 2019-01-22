@@ -206,5 +206,6 @@ typings/
 # FuseBox cache
 .fusebox/
 
+config.dev.json
 
 # End of https://www.gitignore.io/api/go,node,macos,jetbrains+all
