@@ -2,21 +2,20 @@ package main
 
 import (
 	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
+	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	svc "github.com/hwsc-org/hwsc-app-gateway-svc/service"
+	log "github.com/hwsc-org/hwsc-logger/logger"
 	"google.golang.org/grpc"
-	"log"
 	"net"
 )
 
 func main() {
-	log.Println("[INFO] hwsc-app-gateway-svc initiating...")
+	log.Info("hwsc-app-gateway-svc initiating...")
 
 	// make TCP listener
-	lis, err := net.Listen("tcp", "localhost:50055")
+	lis, err := net.Listen(conf.AppGateWaySvc.Network, conf.AppGateWaySvc.String())
 	if err != nil {
-		// log.Fatalf will print message to console, then crashes the program
-		// %v is the value in a default format
-		log.Fatalf("[FATAL] Failed to initialize TCP listener %v\n", err)
+		log.Fatal("Failed to intialize TCP listener:", err.Error())
 	}
 
 	// make gRPC server
@@ -24,10 +23,10 @@ func main() {
 
 	// implement services in /service/service.go
 	pb.RegisterAppGatewayServiceServer(s, &svc.Service{})
-	log.Println("[INFO] hwsc-app-gateway-svc at localhost: 50055...")
+	log.Info("hwsc-app-gateway-svc at:", conf.AppGateWaySvc.String())
 
 	// start gRPC server
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("[FATAL] Failed to serve %v\n", err)
+		log.Fatal("Failed to serve:", err.Error())
 	}
 }
