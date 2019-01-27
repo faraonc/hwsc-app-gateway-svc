@@ -21,13 +21,13 @@ steps:
     secureFile: hwscdevcontainer_pw.txt
 - script: |
     cat $(Agent.TempDirectory)/hwscdevcontainer_pw.txt | docker login -u "$(hwscDevContainerUser)" --password-stdin
-    docker build --no-cache -f Dockerfile -t hwsc/$(hwscDevImageName):$(build.buildId) .
+    docker build --no-cache -f Dockerfile -t hwsc/$(hwscDevImageNameAppGatewaySvc):$(build.buildId) .
   
   displayName: 'Build Docker Image'
   
 - script: |
-    docker tag $(hwscDevImageName) hwsc/$(hwscDevImageName):$(build.buildId)
-    docker push hwsc/$(hwscDevImageName):$(build.buildId)
+    docker tag $(hwscDevImageNameAppGatewaySvc) hwsc/$(hwscDevImageNameAppGatewaySvc):$(build.buildId)
+    docker push hwsc/$(hwscDevImageNameAppGatewaySvc):$(build.buildId)
   
   displayName: 'Push Docker Image'
   
