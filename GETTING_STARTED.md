@@ -54,7 +54,7 @@ The proto file and compiled proto buffers are located in [hwsc-api-blocks](https
 - Returns a collection of documents
 
 ## Prerequisites
-- GoLang version [go 1.11.4](https://golang.org/dl/)
+- GoLang version [go 1.11.5](https://golang.org/dl/)
 - GoLang Dependency Management [dep](https://github.com/golang/dep)
 - Go Source Code Linter [golint](https://github.com/golang/lint)
 - Docker
