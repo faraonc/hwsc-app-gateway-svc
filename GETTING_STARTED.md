@@ -7,7 +7,7 @@
 The proto file and compiled proto buffers are located in [hwsc-api-blocks](https://github.com/hwsc-org/hwsc-api-blocks/tree/master/int/hwsc-app-gateway-svc/proto).
 
 ### GetStatus
-- Gets the current status of the cluster
+- Gets the current status of the application gateway
 ### CreateUser
 - Creates a user
 - Returns the user with password field set to empty string

@@ -30,7 +30,7 @@ func init() {
 		}
 	}
 
-	if err := conf.Get("hosts", "app-gateway-svc").Scan(&AppGateWaySvc); err != nil {
+	if err := conf.Get("hosts", "app").Scan(&AppGateWaySvc); err != nil {
 		log.Fatal("Failed to get configuration", err.Error())
 	}
 

@@ -11,7 +11,7 @@ import (
 // Service struct type, implements the generated (pb file) AppGatewayServiceServer interface
 type Service struct{}
 
-// GetStatus gets the current status of the cluster
+// GetStatus gets the current status of the application gateway
 func (s *Service) GetStatus(ctx context.Context, req *pb.AppGatewayServiceRequest) (*pb.AppGatewayServiceResponse, error) {
 	// TODO
 	resp := &pb.AppGatewayServiceResponse{}
