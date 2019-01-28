@@ -2,11 +2,37 @@ package service
 
 import (
 	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
+	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
+	log "github.com/hwsc-org/hwsc-logger/logger"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 )
 
 // TODO state when can we provide services
+
+const (
+	numServices = 3
+)
+
+var (
+	serviceWg sync.WaitGroup
+)
+
+func init() {
+	serviceWg.Add(numServices)
+	// Handle Terminate Signal(Ctrl + C)
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		serviceWg.Wait()
+		log.Fatal(consts.AppGatewayServiceTag, "hwsc-app-gateway-svc terminated")
+	}()
+
+}
 
 // Service struct type, implements the generated (pb file) AppGatewayServiceServer interface
 type Service struct{}
@@ -14,15 +40,6 @@ type Service struct{}
 // GetStatus gets the current status of the application gateway
 func (s *Service) GetStatus(ctx context.Context, req *pb.AppGatewayServiceRequest) (*pb.AppGatewayServiceResponse, error) {
 	// TODO
-	resp := &pb.AppGatewayServiceResponse{}
-	docSvcResp, docSvcErr := documentSvcClient.GetStatus(context.TODO(), &pb.DocumentRequest{})
-	if docSvcErr != nil {
-		return nil, docSvcErr
-	}
-
-	//TODO how to combine other services here
-	resp.Message = docSvcResp.Message
-
 	return &pb.AppGatewayServiceResponse{
 		Status:  &pb.AppGatewayServiceResponse_Code{Code: uint32(codes.OK)},
 		Message: codes.OK.String(),
