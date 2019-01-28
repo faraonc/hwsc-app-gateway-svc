@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 )
 
@@ -49,6 +50,7 @@ func init() {
 
 type userService struct {
 	client      pb.UserServiceClient
+	lock        sync.RWMutex //TODO implement locks
 	userSvcOpts []grpc.DialOption
 	userSvcConn *grpc.ClientConn
 }

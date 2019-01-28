@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 )
 
@@ -53,6 +54,7 @@ func init() {
 
 type fileTransactionService struct {
 	client           pb.FileTransactionServiceClient
+	lock             sync.RWMutex //TODO implement locks
 	fileTransSvcOpts []grpc.DialOption
 	fileTransSvcConn *grpc.ClientConn
 }

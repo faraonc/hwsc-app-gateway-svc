@@ -3,8 +3,8 @@ package main
 import (
 	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
-	svc "github.com/hwsc-org/hwsc-app-gateway-svc/service"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
+	svc "github.com/hwsc-org/hwsc-app-gateway-svc/service"
 	log "github.com/hwsc-org/hwsc-logger/logger"
 	"google.golang.org/grpc"
 	"net"
