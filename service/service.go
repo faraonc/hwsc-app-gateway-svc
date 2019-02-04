@@ -3,7 +3,7 @@ package service
 import (
 	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
-	log "github.com/hwsc-org/hwsc-logger/logger"
+	log "github.com/hwsc-org/hwsc-lib/logger"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"os"

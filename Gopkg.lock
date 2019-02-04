@@ -76,7 +76,7 @@
 [[projects]]
   branch = "master"
   digest = "1:6d9e620e99454e3aa8f5f41f14f57fb1e2524d22b637f866fb96d51231acc605"
-  name = "github.com/hwsc-org/hwsc-logger"
+  name = "github.com/hwsc-org/hwsc-lib"
   packages = ["logger"]
   pruneopts = "UT"
   revision = "0158a67854b2a2090db0635c02a8e9a450a1c242"
@@ -220,13 +220,14 @@
   analyzer-version = 1
   input-imports = [
     "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto",
-    "github.com/hwsc-org/hwsc-logger/logger",
+    "github.com/hwsc-org/hwsc-lib/logger",
     "github.com/micro/go-config",
     "github.com/micro/go-config/source/env",
     "github.com/micro/go-config/source/file",
     "golang.org/x/net/context",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",
+    "google.golang.org/grpc/connectivity",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

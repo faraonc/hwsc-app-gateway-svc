@@ -1,7 +1,7 @@
 package service
 
 import (
-	log "github.com/hwsc-org/hwsc-logger/logger"
+	log "github.com/hwsc-org/hwsc-lib/logger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"
 )

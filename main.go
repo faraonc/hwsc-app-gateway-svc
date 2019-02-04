@@ -5,7 +5,7 @@ import (
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	svc "github.com/hwsc-org/hwsc-app-gateway-svc/service"
-	log "github.com/hwsc-org/hwsc-logger/logger"
+	log "github.com/hwsc-org/hwsc-lib/logger"
 	"google.golang.org/grpc"
 	"net"
 )

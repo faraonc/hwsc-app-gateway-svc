@@ -3,7 +3,7 @@ package conf
 import (
 	"fmt"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
-	log "github.com/hwsc-org/hwsc-logger/logger"
+	log "github.com/hwsc-org/hwsc-lib/logger"
 	"github.com/micro/go-config"
 	"github.com/micro/go-config/source/env"
 	"github.com/micro/go-config/source/file"
