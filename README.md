@@ -35,8 +35,8 @@ API for hwsc-app-gateway-svc to consume various hwsc services.
 ### [DevOps](https://github.com/hwsc-org/hwsc-dev-ops)
 Resources for managing our services.
 
-### [Logger](https://github.com/hwsc-org/hwsc-logger)
-Utility for logging in services.
+### [Library](https://github.com/hwsc-org/hwsc-lib)
+Utility library for hwsc-services.
 
 ## Team 
 ### Owners
