@@ -29,7 +29,8 @@ func init() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		serviceWg.Wait()
-		log.Fatal(consts.AppGatewayServiceTag, "hwsc-app-gateway-svc terminated")
+		log.Info(consts.AppGatewayServiceTag, "hwsc-app-gateway-svc terminated")
+		os.Exit(0)
 	}()
 
 }

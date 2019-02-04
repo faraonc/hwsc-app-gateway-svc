@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 )
 
@@ -46,7 +45,7 @@ func init() {
 		if err := disconnect(fileTransSvc.fileTransSvcConn, consts.FileTransactionClientTag); err != nil {
 			log.Error(consts.FileTransactionClientTag, err.Error())
 		}
-		log.Error(consts.FileTransactionClientTag, "hwsc-app-gateway-svc terminated")
+		log.Info(consts.FileTransactionClientTag, "hwsc-app-gateway-svc terminated")
 		serviceWg.Done()
 	}()
 
@@ -54,7 +53,6 @@ func init() {
 
 type fileTransactionService struct {
 	client           pb.FileTransactionServiceClient
-	lock             sync.RWMutex //TODO implement locks
 	fileTransSvcOpts []grpc.DialOption
 	fileTransSvcConn *grpc.ClientConn
 }

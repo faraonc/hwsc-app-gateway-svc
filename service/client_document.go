@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 )
 
@@ -42,7 +41,7 @@ func init() {
 		if err := disconnect(documentSvc.documentSvcConn, consts.DocumentClientTag); err != nil {
 			log.Error(consts.DocumentClientTag, err.Error())
 		}
-		log.Error(consts.DocumentClientTag, "hwsc-app-gateway-svc terminated")
+		log.Info(consts.DocumentClientTag, "hwsc-app-gateway-svc terminated")
 		serviceWg.Done()
 	}()
 
@@ -50,7 +49,6 @@ func init() {
 
 type documentService struct {
 	client          pb.DocumentServiceClient
-	lock            sync.RWMutex //TODO implement locks
 	documentSvcOpts []grpc.DialOption
 	documentSvcConn *grpc.ClientConn
 }

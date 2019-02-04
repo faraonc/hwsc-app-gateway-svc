@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 )
 
@@ -42,7 +41,7 @@ func init() {
 		if err := disconnect(userSvc.userSvcConn, consts.UserClientTag); err != nil {
 			log.Error(consts.UserClientTag, err.Error())
 		}
-		log.Error(consts.UserClientTag, "hwsc-app-gateway-svc terminated")
+		log.Info(consts.UserClientTag, "hwsc-app-gateway-svc terminated")
 		serviceWg.Done()
 	}()
 
@@ -50,7 +49,6 @@ func init() {
 
 type userService struct {
 	client      pb.UserServiceClient
-	lock        sync.RWMutex //TODO implement locks
 	userSvcOpts []grpc.DialOption
 	userSvcConn *grpc.ClientConn
 }
