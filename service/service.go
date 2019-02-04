@@ -15,6 +15,7 @@ import (
 // TODO state when can we provide services
 
 const (
+	// TODO must be the same number of services
 	numServices = 3
 )
 
@@ -23,6 +24,7 @@ var (
 )
 
 func init() {
+	// This ensures that all services are disconnected before exit during development mode
 	serviceWg.Add(numServices)
 	// Handle Terminate Signal(Ctrl + C)
 	c := make(chan os.Signal)
