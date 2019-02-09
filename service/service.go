@@ -12,15 +12,33 @@ import (
 	"syscall"
 )
 
-// TODO state when can we provide services
+// state of the service
+type state uint32
+
+// stateLocker synchronizes the state of the service
+type stateLocker struct {
+	lock                sync.RWMutex
+	currentServiceState state
+}
+
+// Service struct type, implements the generated (pb file) AppGatewayServiceServer interface
+type Service struct{}
 
 const (
 	// TODO must be the same number of services
 	numServices = 3
+
+	// available - Service is ready and available
+	available state = 0
+
+	// unavailable - Service is unavailable. Example: Provisioning something
+	unavailable state = 1
 )
 
 var (
-	serviceWg sync.WaitGroup
+	serviceWg          sync.WaitGroup
+	serviceStateLocker stateLocker
+	serviceStateMap    map[state]string
 )
 
 func init() {
@@ -35,14 +53,34 @@ func init() {
 		os.Exit(0)
 	}()
 
+	serviceStateMap = map[state]string{
+		available:   "Available",
+		unavailable: "Unavailable",
+	}
 }
 
-// Service struct type, implements the generated (pb file) AppGatewayServiceServer interface
-type Service struct{}
+func (s state) String() string {
+	return serviceStateMap[s]
+}
 
 // GetStatus gets the current status of the application gateway
+// TODO integration test
 func (s *Service) GetStatus(ctx context.Context, req *pb.AppGatewayServiceRequest) (*pb.AppGatewayServiceResponse, error) {
-	// TODO
+	log.Info(consts.AppGatewayServiceTag, "Requesting GetStatus service")
+
+	// Lock the state for reading
+	serviceStateLocker.lock.RLock()
+	// Unlock the state before function exits
+	defer serviceStateLocker.lock.RUnlock()
+
+	log.Info(consts.AppGatewayServiceTag, "Service State:", serviceStateLocker.currentServiceState.String())
+	if serviceStateLocker.currentServiceState == unavailable {
+		return &pb.AppGatewayServiceResponse{
+			Status:  &pb.AppGatewayServiceResponse_Code{Code: uint32(codes.Unavailable)},
+			Message: codes.Unavailable.String(),
+		}, nil
+	}
+
 	return &pb.AppGatewayServiceResponse{
 		Status:  &pb.AppGatewayServiceResponse_Code{Code: uint32(codes.OK)},
 		Message: codes.OK.String(),
