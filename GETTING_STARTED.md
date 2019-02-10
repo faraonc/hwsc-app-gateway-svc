@@ -7,7 +7,7 @@
 The proto file and compiled proto buffers are located in [hwsc-api-blocks](https://github.com/hwsc-org/hwsc-api-blocks/tree/master/int/hwsc-app-gateway-svc/proto).
 
 ### GetStatus
-- Gets the current status of the cluster
+- Gets the current status of the application gateway
 ### CreateUser
 - Creates a user
 - Returns the user with password field set to empty string
@@ -54,7 +54,7 @@ The proto file and compiled proto buffers are located in [hwsc-api-blocks](https
 - Returns a collection of documents
 
 ## Prerequisites
-- GoLang version [go 1.11.4](https://golang.org/dl/)
+- GoLang version [go 1.11.5](https://golang.org/dl/)
 - GoLang Dependency Management [dep](https://github.com/golang/dep)
 - Go Source Code Linter [golint](https://github.com/golang/lint)
 - Docker
