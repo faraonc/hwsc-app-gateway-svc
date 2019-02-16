@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
+	pbsvc "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/app"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	svc "github.com/hwsc-org/hwsc-app-gateway-svc/service"
@@ -23,8 +23,8 @@ func main() {
 	s := grpc.NewServer()
 
 	// implement services in /service/service.go
-	pb.RegisterAppGatewayServiceServer(s, &svc.Service{})
-	log.Info(consts.AppGatewayServiceTag, "hwsc-app-gateway-svc at:", conf.AppGateWaySvc.String())
+	pbsvc.RegisterAppGatewayServiceServer(s, &svc.Service{})
+	log.Info("hwsc-app-gateway-svc at:", conf.AppGateWaySvc.String())
 
 	// start gRPC server
 	if err := s.Serve(lis); err != nil {

@@ -75,30 +75,36 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:244a13fa48df655e8d40d722c7923b1b4f18b78c537b3d5e82f1513e47d372e5"
+  digest = "1:390a536cc49f48bba3cdad634f950a4432823db5ae8f44a9b844b99884c1b8f9"
   name = "github.com/hwsc-org/hwsc-api-blocks"
-  packages = ["int/hwsc-app-gateway-svc/proto"]
+  packages = [
+    "int/hwsc-app-gateway-svc/app",
+    "int/hwsc-document-svc/document",
+    "int/hwsc-file-transaction-svc/file",
+    "int/hwsc-user-svc/user",
+    "lib",
+  ]
   pruneopts = "UT"
-  revision = "c6e0ee1349a7efe7b8c10cd3619a0ef1717396fc"
+  revision = "5fce68a4dfda026b8b0319d2c10bf332c135f029"
 
 [[projects]]
   branch = "master"
-  digest = "1:6d9e620e99454e3aa8f5f41f14f57fb1e2524d22b637f866fb96d51231acc605"
+  digest = "1:7453cfdd3e1bde9652c1cc3024629ab4d3eacf4e97faf15c56278c86e99ba0a5"
   name = "github.com/hwsc-org/hwsc-lib"
   packages = ["logger"]
   pruneopts = "UT"
-  revision = "0158a67854b2a2090db0635c02a8e9a450a1c242"
+  revision = "3fd1105ad387759fd645140bd84d7815ce2ed5e0"
 
 [[projects]]
-  digest = "1:8eb1de8112c9924d59bf1d3e5c26f5eaa2bfc2a5fcbb92dc1c2e4546d695f277"
+  digest = "1:a0cefd27d12712af4b5018dc7046f245e1e3b5760e2e848c30b171b570708f9b"
   name = "github.com/imdario/mergo"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9f23e2d6bd2a77f959b2bf6acdbefd708a83a4a4"
-  version = "v0.3.6"
+  revision = "7c29201646fa3de8506f701213473dd407f19646"
+  version = "v0.3.7"
 
 [[projects]]
-  digest = "1:86462926d9be240b4bfb447ec6c9da2b65a259b6438d062cbb2d9d6c4dc03181"
+  digest = "1:86cb9d3d50039147d08544340272c307400cb802519da1dfca3a54327ccc63db"
   name = "github.com/micro/go-config"
   packages = [
     ".",
@@ -117,8 +123,8 @@
     "source/file",
   ]
   pruneopts = "UT"
-  revision = "c6de52c5ef31e1c20bc9a563f2107ca16ac752e2"
-  version = "v0.12.0"
+  revision = "2a4da1fca4d75c5e1fb254a60b4aa987c73fab08"
+  version = "v0.14.0"
 
 [[projects]]
   digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
@@ -150,15 +156,15 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "ed066c81e75eba56dd9bd2139ade88125b855585"
+  revision = "3a22650c66bd7f4fb6d1e8072ffd7b75c8a27898"
 
 [[projects]]
   branch = "master"
-  digest = "1:bd7f9a2ec2751199499f5cf1d0e23ccf4d92f75b4bfba17ce79ae0f7c85deaa9"
+  digest = "1:8207c052fb873f83c61a5aa16f6add5feb9881eda2112b56f69fd3b9e7f55c3f"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "770c60269bf0ef965e9e7ac8bedcb6bca2a1cefd"
+  revision = "d0b11bdaac8adb652bff00e49bcacf992835621a"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -189,7 +195,7 @@
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "UT"
-  revision = "db91494dd46c1fdcbbde05e5ff5eb56df8f7d79a"
+  revision = "bd968387e4aa590b3c6e4ba38ecac1ed314d43ad"
 
 [[projects]]
   digest = "1:9ab5a33d8cb5c120602a34d2e985ce17956a4e8c2edce7e6961568f95e40c09a"
@@ -243,7 +249,10 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto",
+    "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/app",
+    "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-document-svc/document",
+    "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-file-transaction-svc/file",
+    "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-user-svc/user",
     "github.com/hwsc-org/hwsc-lib/logger",
     "github.com/micro/go-config",
     "github.com/micro/go-config/source/env",

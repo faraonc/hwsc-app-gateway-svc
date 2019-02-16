@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"flag"
-	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
+	pbfile "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-file-transaction-svc/file"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	log "github.com/hwsc-org/hwsc-lib/logger"
@@ -52,7 +52,7 @@ func init() {
 }
 
 type fileTransactionService struct {
-	client           pb.FileTransactionServiceClient
+	client           pbfile.FileTransactionServiceClient
 	fileTransSvcOpts []grpc.DialOption
 	fileTransSvcConn *grpc.ClientConn
 }
@@ -78,7 +78,7 @@ func (svc *fileTransactionService) dial() error {
 	if err != nil {
 		return err
 	}
-	svc.client = pb.NewFileTransactionServiceClient(svc.fileTransSvcConn)
+	svc.client = pbfile.NewFileTransactionServiceClient(svc.fileTransSvcConn)
 	return nil
 }
 
@@ -86,12 +86,12 @@ func (svc *fileTransactionService) getConnection() *grpc.ClientConn {
 	return svc.fileTransSvcConn
 }
 
-func (svc *fileTransactionService) getStatus() (*pb.FileTransactionResponse, error) {
+func (svc *fileTransactionService) getStatus() (*pbfile.FileTransactionResponse, error) {
 	if err := refreshConnection(svc, consts.FileTransactionClientTag); err != nil {
 		return nil, err
 	}
 	// not guaranteed that we are connected, but return the error and try reconnecting again later
-	resp, err := svc.client.GetStatus(context.TODO(), &pb.FileTransactionRequest{})
+	resp, err := svc.client.GetStatus(context.TODO(), &pbfile.FileTransactionRequest{})
 	if err != nil {
 		return nil, err
 	}
