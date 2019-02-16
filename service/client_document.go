@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"flag"
-	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
+	pbdoc "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-document-svc/document"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	log "github.com/hwsc-org/hwsc-lib/logger"
@@ -48,7 +48,7 @@ func init() {
 }
 
 type documentService struct {
-	client          pb.DocumentServiceClient
+	client          pbdoc.DocumentServiceClient
 	documentSvcOpts []grpc.DialOption
 	documentSvcConn *grpc.ClientConn
 }
@@ -74,7 +74,7 @@ func (svc *documentService) dial() error {
 	if err != nil {
 		return err
 	}
-	svc.client = pb.NewDocumentServiceClient(svc.documentSvcConn)
+	svc.client = pbdoc.NewDocumentServiceClient(svc.documentSvcConn)
 	return nil
 }
 
@@ -82,12 +82,12 @@ func (svc *documentService) getConnection() *grpc.ClientConn {
 	return svc.documentSvcConn
 }
 
-func (svc *documentService) getStatus() (*pb.DocumentResponse, error) {
+func (svc *documentService) getStatus() (*pbdoc.DocumentResponse, error) {
 	if err := refreshConnection(svc, consts.DocumentClientTag); err != nil {
 		return nil, err
 	}
 	// not guaranteed that we are connected, but return the error and try reconnecting again later
-	resp, err := svc.client.GetStatus(context.TODO(), &pb.DocumentRequest{})
+	resp, err := svc.client.GetStatus(context.TODO(), &pbdoc.DocumentRequest{})
 	if err != nil {
 		return nil, err
 	}

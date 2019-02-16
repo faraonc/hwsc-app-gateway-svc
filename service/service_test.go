@@ -1,7 +1,7 @@
 package service
 
 import (
-	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
+	pbsvc "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/app"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/net/context"
 	"testing"
@@ -9,12 +9,12 @@ import (
 
 func TestGetStatus(t *testing.T) {
 	cases := []struct {
-		req         *pb.AppGatewayServiceRequest
+		req         *pbsvc.AppGatewayServiceRequest
 		serverState state
 		expMsg      string
 	}{
-		{&pb.AppGatewayServiceRequest{}, available, "OK"},
-		{&pb.AppGatewayServiceRequest{}, unavailable, "Unavailable"},
+		{&pbsvc.AppGatewayServiceRequest{}, available, "OK"},
+		{&pbsvc.AppGatewayServiceRequest{}, unavailable, "Unavailable"},
 	}
 
 	for _, c := range cases {

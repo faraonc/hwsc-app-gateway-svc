@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"flag"
-	pb "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/proto"
+	pbuser "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-user-svc/user"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	log "github.com/hwsc-org/hwsc-lib/logger"
@@ -48,7 +48,7 @@ func init() {
 }
 
 type userService struct {
-	client      pb.UserServiceClient
+	client      pbuser.UserServiceClient
 	userSvcOpts []grpc.DialOption
 	userSvcConn *grpc.ClientConn
 }
@@ -74,7 +74,7 @@ func (svc *userService) dial() error {
 	if err != nil {
 		return err
 	}
-	svc.client = pb.NewUserServiceClient(svc.userSvcConn)
+	svc.client = pbuser.NewUserServiceClient(svc.userSvcConn)
 	return nil
 }
 
@@ -82,12 +82,12 @@ func (svc *userService) getConnection() *grpc.ClientConn {
 	return svc.userSvcConn
 }
 
-func (svc *userService) getStatus() (*pb.UserResponse, error) {
+func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
 	}
 	// not guaranteed that we are connected, but return the error and try reconnecting again later
-	resp, err := svc.client.GetStatus(context.TODO(), &pb.UserRequest{})
+	resp, err := svc.client.GetStatus(context.TODO(), &pbuser.UserRequest{})
 	if err != nil {
 		return nil, err
 	}
