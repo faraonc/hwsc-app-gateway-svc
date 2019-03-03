@@ -4,14 +4,8 @@ import (
 	pbsvc "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/app"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/net/context"
-	"os"
 	"testing"
 )
-
-func TestMain(t *testing.M) {
-	code := t.Run()
-	os.Exit(code)
-}
 
 func TestGetStatus(t *testing.T) {
 	cases := []struct {
