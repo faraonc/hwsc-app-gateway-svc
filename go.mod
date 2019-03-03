@@ -9,5 +9,5 @@ require (
 	golang.org/x/net v0.0.0-20190213061140-3a22650c66bd
 	golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a // indirect
 	google.golang.org/genproto v0.0.0-20190215211957-bd968387e4aa // indirect
-	google.golang.org/grpc v1.18.0
+	google.golang.org/grpc v1.19.0
 )
