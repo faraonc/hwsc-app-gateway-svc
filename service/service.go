@@ -120,7 +120,7 @@ func (s *Service) UpdateUser(ctx context.Context, req *pbsvc.AppGatewayServiceRe
 // AuthenticateUser looks through users and perform email and password match
 // Returns matched user
 func (s *Service) AuthenticateUser(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
-	// TODO
+	// TODO possibly not needed anymore
 	return &pbsvc.AppGatewayServiceResponse{
 		Status:  &pbsvc.AppGatewayServiceResponse_Code{Code: uint32(codes.OK)},
 		Message: codes.OK.String(),
