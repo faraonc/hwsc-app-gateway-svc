@@ -127,9 +127,19 @@ func (s *Service) AuthenticateUser(ctx context.Context, req *pbsvc.AppGatewaySer
 	}, nil
 }
 
-// GetToken looks through users and perform email and password match
+// GetAuthToken looks through users and perform email and password match
 // Returns a token string
-func (s *Service) GetToken(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
+func (s *Service) GetAuthToken(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
+	// TODO
+	return &pbsvc.AppGatewayServiceResponse{
+		Status:  &pbsvc.AppGatewayServiceResponse_Code{Code: uint32(codes.OK)},
+		Message: codes.OK.String(),
+	}, nil
+}
+
+// VerifyEmailToken verifies the user registration
+// Returns a TODO
+func (s *Service) VerifyEmailToken(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
 	// TODO
 	return &pbsvc.AppGatewayServiceResponse{
 		Status:  &pbsvc.AppGatewayServiceResponse_Code{Code: uint32(codes.OK)},
