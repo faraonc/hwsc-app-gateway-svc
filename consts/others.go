@@ -1,6 +1,7 @@
 package consts
 
 const (
-	BasicAuthHeader string = "authorization"
-	BasicAuthPrefix string = "Basic "
+	StrBasicAuthHeader string = "authorization"
+	StrBasicAuthPrefix string = "Basic "
+	StrAuthAttempt     string = "Attempt"
 )

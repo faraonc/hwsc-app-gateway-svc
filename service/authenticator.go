@@ -24,33 +24,35 @@ func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
 	//if err == nil {
 	//	return newCtx, nil
 	//}
+	//return tryBasicAuth(ctx)
+
+	//TODO remove when we don't want to support insecure dialing
 	newCtx, err = tryBasicAuth(ctx)
 	if err == nil {
 		return newCtx, nil
 	}
 
-	// TODO remove when we don't want to support insecure dialing
 	return context.TODO(), nil
 }
 
 func tryBasicAuth(ctx context.Context) (context.Context, error) {
-	log.Info(consts.BasicAuthTag)
+	log.Info(consts.BasicAuthTag, consts.StrAuthAttempt)
 	// auth := b.email + ":" + b.password
 	// enc := base64.StdEncoding.EncodeToString([]byte(auth))
 	// the format is "authorization": "Basic " + enc,
-	auth, err := extractHeader(ctx, consts.BasicAuthHeader)
+	auth, err := extractHeader(ctx, consts.StrBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.BasicAuthTag, err.Error())
 		return ctx, err
 	}
 	log.Info(consts.BasicAuthTag, auth)
 
-	if !strings.HasPrefix(auth, consts.BasicAuthPrefix) {
+	if !strings.HasPrefix(auth, consts.StrBasicAuthPrefix) {
 		log.Error(consts.BasicAuthTag, consts.ErrMissingBasicAuthPrefix.Error())
 		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingBasicAuthPrefix.Error())
 	}
 
-	c, err := base64.StdEncoding.DecodeString(auth[len(consts.BasicAuthPrefix):])
+	c, err := base64.StdEncoding.DecodeString(auth[len(consts.StrBasicAuthPrefix):])
 	if err != nil {
 		log.Error(consts.BasicAuthTag, consts.ErrInvalidBase64Header.Error())
 		return ctx, status.Error(codes.Unauthenticated, consts.ErrInvalidBase64Header.Error())
@@ -72,7 +74,7 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 	}
 
 	// Remove token from headers from here on
-	return purgeHeader(ctx, consts.BasicAuthHeader), nil
+	return purgeHeader(ctx, consts.StrBasicAuthHeader), nil
 }
 
 func extractHeader(ctx context.Context, header string) (string, error) {
