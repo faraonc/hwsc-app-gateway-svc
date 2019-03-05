@@ -60,7 +60,8 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 
 	emailPassword := string(c)
 	s := strings.IndexByte(emailPassword, ':')
-	if s < 0 {
+	// email:password
+	if s < 0 || emailPassword[:s] == "" || emailPassword[s+1:] == "" {
 		log.Error(consts.BasicAuthTag, consts.ErrInvalidBasicAuthFormat.Error())
 		return ctx, status.Error(codes.Unauthenticated, consts.ErrInvalidBasicAuthFormat.Error())
 	}
@@ -80,7 +81,7 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 func extractHeader(ctx context.Context, header string) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", status.Error(codes.Unauthenticated, consts.ErrMissingAuthHeaders.Error())
+		return "", status.Error(codes.Unauthenticated, consts.ErrMissingAuthHeadersFromCtx.Error())
 	}
 	authHeaders, ok := md[header]
 	if !ok {
