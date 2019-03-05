@@ -93,3 +93,15 @@ func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	}
 	return resp, nil
 }
+
+func (svc *userService) authenticateUser(email string, password string) (*pbuser.UserResponse, error) {
+	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
+		return nil, err
+	}
+	// not guaranteed that we are connected, but return the error and try reconnecting again later
+	resp, err := svc.client.AuthenticateUser(context.TODO(), &pbuser.UserRequest{})
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

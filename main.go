@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	pbsvc "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/app"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
@@ -20,7 +21,9 @@ func main() {
 	}
 
 	// make gRPC server
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(svc.Authenticate)),
+	)
 
 	// implement services in /service/service.go
 	pbsvc.RegisterAppGatewayServiceServer(s, &svc.Service{})
