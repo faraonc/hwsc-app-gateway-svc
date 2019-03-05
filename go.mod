@@ -18,8 +18,9 @@ require (
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/gorilla/mux v1.7.0 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc // indirect
+	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/grpc-ecosystem/grpc-gateway v1.8.1 // indirect
-	github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190304201726-dbc5da2fc6a9
+	github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190304222521-8afb19c41104
 	github.com/hwsc-org/hwsc-lib v0.0.0-20190303122541-eb44cef9a9c3
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect

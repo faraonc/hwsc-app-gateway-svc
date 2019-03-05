@@ -105,4 +105,3 @@ func (svc *userService) authenticateUser(email string, password string) (*pbuser
 	}
 	return resp, nil
 }
-

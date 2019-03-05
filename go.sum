@@ -119,6 +119,7 @@ github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoA
 github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7/go.mod h1:FecbI9+v66THATjSRHfNgh1IVFe/9kFxbXtjV0ctIMA=
 github.com/gregjones/httpcache v0.0.0-20181110185634-c63ab54fda8f/go.mod h1:FecbI9+v66THATjSRHfNgh1IVFe/9kFxbXtjV0ctIMA=
 github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc/go.mod h1:FecbI9+v66THATjSRHfNgh1IVFe/9kFxbXtjV0ctIMA=
+github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 h1:Iju5GlWwrvL6UBg4zJJt3btmonfrMlCDdsejg4CZE7c=
 github.com/grpc-ecosystem/go-grpc-middleware v1.0.0/go.mod h1:FiyG127CGDf3tlThmgyCl78X/SZQqEOJBCDaAfeWzPs=
 github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
 github.com/grpc-ecosystem/grpc-gateway v1.4.1/go.mod h1:RSKVYQBd5MCa4OVpNdGskqpgL2+G+NZTnrVHpWWfpdw=
@@ -151,6 +152,8 @@ github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190215203214-5fce68a4dfda/go.mod h1
 github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190303053613-bd62137ee222/go.mod h1:/iVVgMsaXIOevC15fCsGWI0Dx2p6POFJQxeYbyjGst0=
 github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190304201726-dbc5da2fc6a9 h1:Phtgv3BrDZaq18DSJwDWcA+z3P3OmMc+WaoXeteoFwo=
 github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190304201726-dbc5da2fc6a9/go.mod h1:/iVVgMsaXIOevC15fCsGWI0Dx2p6POFJQxeYbyjGst0=
+github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190304222521-8afb19c41104 h1:UqiivTyUeE4YhnANR2oUb9vjDpKPEgvKN55CPr13aFY=
+github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190304222521-8afb19c41104/go.mod h1:/iVVgMsaXIOevC15fCsGWI0Dx2p6POFJQxeYbyjGst0=
 github.com/hwsc-org/hwsc-lib v0.0.0-20190214200222-3fd1105ad387 h1:Vc8Eul3PSYDCLXJI3xcYmOxmgjrca+CpNKbRvLd8NuU=
 github.com/hwsc-org/hwsc-lib v0.0.0-20190214200222-3fd1105ad387/go.mod h1:fQ/Zng9ELAgK94HjMbfUU5+A4TOSHOHni3i2GV7IIN4=
 github.com/hwsc-org/hwsc-lib v0.0.0-20190303122541-eb44cef9a9c3 h1:Q1gqCkFDSXaHy6DO7qdv+JC1Wjk0nMBI89VD+fs0WFU=
