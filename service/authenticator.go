@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
+	pbauth "github.com/hwsc-org/hwsc-lib/auth"
 	log "github.com/hwsc-org/hwsc-lib/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -40,7 +41,7 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 	// auth := b.email + ":" + b.password
 	// enc := base64.StdEncoding.EncodeToString([]byte(auth))
 	// the format is "authorization": "Basic " + enc,
-	auth, err := extractHeader(ctx, consts.StrBasicAuthHeader)
+	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.BasicAuthTag, err.Error())
 		return ctx, err
@@ -67,18 +68,32 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 	}
 
 	// validate with user service here
-	// TODO figure out what to do with resp containing a User object
-	// TODO maybe add as metadata in context
-	_, err = userSvc.authenticateUser(emailPassword[:s], emailPassword[s+1:])
+	resp, err := userSvc.authenticateUser(emailPassword[:s], emailPassword[s+1:])
 	if err != nil {
+		log.Error(consts.BasicAuthTag, err.Error())
 		return ctx, status.Error(codes.Unauthenticated, err.Error())
 	}
 
+	if err := pbauth.ValidateIdentification(resp.Identification); err != nil {
+		log.Error(consts.BasicAuthTag, err.Error())
+		return ctx, status.Error(codes.Internal, err.Error())
+	}
+
 	// Remove token from headers from here on
-	return purgeHeader(ctx, consts.StrBasicAuthHeader), nil
+	cleanCtx, err := purgeContextHeader(ctx, consts.StrMdBasicAuthHeader)
+	if err != nil {
+		log.Error(consts.BasicAuthTag, err.Error())
+		return ctx, status.Error(codes.Unauthenticated, err.Error())
+	}
+	// Add auth token string
+	retMd := metadata.Pairs(consts.StrMdAuthToken, resp.Identification.Token)
+	return metadata.NewIncomingContext(cleanCtx, retMd), nil
 }
 
-func extractHeader(ctx context.Context, header string) (string, error) {
+func extractContextHeader(ctx context.Context, header string) (string, error) {
+	if strings.TrimSpace(header) == "" {
+		return "", status.Error(codes.Unauthenticated, consts.ErrMissingHeader.Error())
+	}
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", status.Error(codes.Unauthenticated, consts.ErrMissingAuthHeadersFromCtx.Error())
@@ -93,9 +108,12 @@ func extractHeader(ctx context.Context, header string) (string, error) {
 	return authHeaders[0], nil
 }
 
-func purgeHeader(ctx context.Context, header string) context.Context {
+func purgeContextHeader(ctx context.Context, header string) (context.Context, error) {
+	if strings.TrimSpace(header) == "" {
+		return nil, consts.ErrMissingHeader
+	}
 	md, _ := metadata.FromIncomingContext(ctx)
 	mdCopy := md.Copy()
 	mdCopy[header] = nil
-	return metadata.NewIncomingContext(ctx, mdCopy)
+	return metadata.NewIncomingContext(ctx, mdCopy), nil
 }

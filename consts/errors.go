@@ -9,4 +9,5 @@ var (
 	ErrMissingAuthHeadersFromCtx = errors.New("no headers in request")
 	ErrMissingAuthHeader         = errors.New("no header in request")
 	ErrMultipleAuthHeaders       = errors.New("more than 1 header in request")
+	ErrMissingHeader             = errors.New("missing header")
 )
