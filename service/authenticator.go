@@ -81,9 +81,10 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 
 	// Remove token from headers from here on
 	cleanCtx, err := purgeContextHeader(ctx, consts.StrMdBasicAuthHeader)
-	if err != nil {
-		log.Error(consts.BasicAuthTag, err.Error())
-		return ctx, status.Error(codes.Unauthenticated, err.Error())
+	st, ok := status.FromError(err)
+	if !ok {
+		log.Error(consts.BasicAuthTag, st.Message())
+		return ctx, status.Error(codes.Unauthenticated, st.Message())
 	}
 	// Add auth token string
 	retMd := metadata.Pairs(consts.StrMdAuthToken, resp.Identification.Token)
