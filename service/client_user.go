@@ -22,14 +22,18 @@ var (
 func init() {
 	userSvc = &userService{}
 	if err := refreshConnection(userSvc, consts.UserClientTag); err != nil {
-		log.Fatal(consts.UserClientTag, err.Error())
+		// TODO once docker container is runnable
+		log.Error(consts.UserClientTag, err.Error())
+		//log.Fatal(consts.UserClientTag, err.Error())
 	}
 	// NOTE:
 	// app-gateway-svc does not start if all the services are not ready
 	// this is ONLY on app-gateway-svc startup
 	resp, err := userSvc.getStatus()
 	if err != nil {
-		log.Fatal(consts.UserClientTag, err.Error())
+		// TODO once docker container is runnable
+		log.Error(consts.UserClientTag, err.Error())
+		//log.Fatal(consts.UserClientTag, err.Error())
 	} else {
 		log.Info(consts.UserClientTag, resp.String())
 	}

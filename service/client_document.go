@@ -22,14 +22,18 @@ var (
 func init() {
 	documentSvc = &documentService{}
 	if err := refreshConnection(documentSvc, consts.DocumentClientTag); err != nil {
-		log.Fatal(consts.DocumentClientTag, err.Error())
+		// TODO once docker container is runnable
+		log.Error(consts.DocumentClientTag, err.Error())
+		//log.Fatal(consts.DocumentClientTag, err.Error())
 	}
 	// NOTE:
 	// app-gateway-svc does not start if all the services are not ready
 	// this is ONLY on app-gateway-svc startup
 	resp, err := documentSvc.getStatus()
 	if err != nil {
-		log.Fatal(consts.DocumentClientTag, err.Error())
+		// TODO once docker container is runnable
+		log.Error(consts.DocumentClientTag, err.Error())
+		//log.Fatal(consts.DocumentClientTag, err.Error())
 	} else {
 		log.Info(consts.DocumentClientTag, resp.String())
 	}
