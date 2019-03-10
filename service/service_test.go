@@ -40,7 +40,6 @@ func TestMain(m *testing.M) {
 	connectionString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=%s port=%s",
 		UserDB.Host, UserDB.User, UserDB.Password, UserDB.Name, UserDB.SSLMode, UserDB.Port)
 
-	fmt.Println(connectionString)
 	postgresDB, err := sql.Open("postgres", connectionString)
 	if err != nil {
 		logger.Fatal(consts.TestTag, "Failed to get psql connection", err.Error())
