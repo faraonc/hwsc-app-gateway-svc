@@ -39,7 +39,7 @@ steps:
 
   - script: go build -v .
     workingDirectory: '$(modulePath)'
-    displayName: 'Build Test'
+    displayName: 'Build Go Executable Test'
 
   - script: |
       PASSWORD=$(cat $(Agent.TempDirectory)/hwsctestgmail_pw.txt)
@@ -91,6 +91,11 @@ steps:
       secureFile: hwscdevcontainer_pw.txt
   - script: |
       cat $(Agent.TempDirectory)/hwscdevcontainer_pw.txt | docker login -u "$(hwscDevContainerUser)" --password-stdin
-      docker build --no-cache -f Dockerfile -t hwsc/$(hwscDevImageNameAppGatewaySvc):$(build.buildId) .
+      docker build --no-cache -f Dockerfile -t hwsc/hwsc-app-gateway-svc:test-int .
     workingDirectory: '$(modulePath)'
-    displayName: 'Build Docker Image Test'
+    displayName: 'Build Docker Image Test Internal'
+
+  - script: |
+      docker push hwsc/hwsc-app-gateway-svc:test-int
+    workingDirectory: '$(modulePath)'
+    displayName: 'Push Docker Image Test Internal'
