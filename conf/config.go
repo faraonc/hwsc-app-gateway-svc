@@ -6,7 +6,6 @@ import (
 	log "github.com/hwsc-org/hwsc-lib/logger"
 	"github.com/micro/go-config"
 	"github.com/micro/go-config/source/env"
-	"github.com/micro/go-config/source/file"
 )
 
 var (
@@ -23,20 +22,14 @@ var (
 func init() {
 	// Create new config
 	conf := config.NewConfig()
-	if err := conf.Load(file.NewSource(file.WithPath("conf/json/config.dev.json"))); err != nil {
-		// TODO - This is a hacky solution for the unit test, because of a weird path issue with GoLang Unit Test
-		if err := conf.Load(file.NewSource(file.WithPath("../conf/json/config.dev.json"))); err != nil {
-			log.Info(consts.AppGatewayServiceTag, "Failed to initialize configuration file", err.Error())
-			log.Info(consts.AppGatewayServiceTag, "Reading ENV variables")
-			src := env.NewSource(
-				env.WithPrefix("hosts"),
-			)
-			if err := conf.Load(src); err != nil {
-				log.Fatal(consts.AppGatewayServiceTag, "Failed to initialize configuration %v\n", err.Error())
-			}
-		}
-	}
 
+	log.Info(consts.AppGatewayServiceTag, "Reading ENV variables")
+	src := env.NewSource(
+		env.WithPrefix("hosts"),
+	)
+	if err := conf.Load(src); err != nil {
+		log.Fatal(consts.AppGatewayServiceTag, "Failed to initialize configuration %v\n", err.Error())
+	}
 	if err := conf.Get("hosts", "app").Scan(&AppGateWaySvc); err != nil {
 		log.Fatal(consts.AppGatewayServiceTag, "Failed to get app-gateway-svc configuration", err.Error())
 	}

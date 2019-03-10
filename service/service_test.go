@@ -7,6 +7,11 @@ import (
 	"testing"
 )
 
+func TestMain(m *testing.M) {
+
+}
+
+
 func TestGetStatus(t *testing.T) {
 	cases := []struct {
 		req         *pbsvc.AppGatewayServiceRequest

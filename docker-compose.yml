@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  postgres:
+    image: "postgres:alpine"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=$hosts_postgres_password
+      - POSTGRES_DB=$hosts_postgres_db
+  user-svc:
+    image: "hwsc/dev-hwsc-user-svc:459"
+    ports:
+      - "50052:50052"
+    environment:
+      - hosts_user_address
+      - hosts_user_port
+      - hosts_user_network
+      - hosts_postgres_host
+      - hosts_postgres_db
+      - hosts_postgres_user
+      - hosts_postgres_password
+      - hosts_postgres_sslmode
+      - hosts_postgres_port
+      - hosts_smtp_host
+      - hosts_smtp_port
+      - hosts_smtp_username
+      - hosts_smtp_password
