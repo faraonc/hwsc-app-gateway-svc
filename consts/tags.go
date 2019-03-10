@@ -6,4 +6,5 @@ const (
 	UserClientTag            string = "User Client -"
 	FileTransactionClientTag string = "File Transaction Client -"
 	BasicAuthTag             string = "Basic Auth -"
+	TestTag                  string = "Test -"
 )
