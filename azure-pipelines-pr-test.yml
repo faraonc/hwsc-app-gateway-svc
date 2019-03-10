@@ -51,11 +51,11 @@ steps:
       export hosts_smtp_password=$PASSWORD
       docker-compose up -d
       go test -v -cover -race ./...
+      docker-compose down
+      docker-compose up -d
       go get github.com/jstemmer/go-junit-report
       go get github.com/axw/gocov/gocov
       go get github.com/AlekSi/gocov-xml
-      docker-compose down
-      docker-compose up -d
       go test -coverprofile=coverage.out -v -race -covermode atomic ./... 2>&1 | go-junit-report > report.xml
       gocov convert coverage.out | gocov-xml > coverage.xml
       mkdir -p coverage/official-tool
