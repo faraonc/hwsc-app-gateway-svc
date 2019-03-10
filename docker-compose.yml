@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=$hosts_postgres_password
       - POSTGRES_DB=$hosts_postgres_db
   user-svc:
-    image: "hwsc/dev-hwsc-user-svc:480"
+    image: "hwsc/hwsc-user-svc:ext"
     ports:
       - "50052:50052"
     environment:
