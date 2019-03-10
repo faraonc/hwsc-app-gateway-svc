@@ -16,6 +16,7 @@ variables:
   - name: modulePath
     value: '$(GOPATH)/$(build.repository.name)'
   - group: hwsc-dev-container-vars
+  - group: hwsc-user-svc-env-vars
 
 steps:
   - script: |
@@ -32,8 +33,26 @@ steps:
     workingDirectory: '$(modulePath)'
     displayName: 'Go Get Dependencies'
 
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: hwsctestgmail_pw.txt # contains info for test gmail
+
   - script: |
+      PASSWORD=$(cat $(Agent.TempDirectory)/hwsctestgmail_pw.txt)
+      export hosts_postgres_host="localhost"
+      export hosts_postgres_db="test_user_svc"
+      export hosts_postgres_user="postgres"
+      export hosts_postgres_password="secret"
+      export hosts_postgres_sslmode="disable"
+      export hosts_postgres_port="5432"
+      export hosts_smtp_host=$(testGmailHost)
+      export hosts_smtp_port=$(testGmailPort)
+      export hosts_smtp_username=$(testGmailUser)
+      export hosts_smtp_password=$PASSWORD
+      docker-compose up -d
       go test -v -cover -race ./...
+      docker-compose down
+      docker-compose up -d
       go get github.com/jstemmer/go-junit-report
       go get github.com/axw/gocov/gocov
       go get github.com/AlekSi/gocov-xml
@@ -44,6 +63,7 @@ steps:
       go get -u github.com/matm/gocov-html
       gocov convert coverage.out > coverage.json
       gocov-html < coverage.json > coverage/index.html
+      docker-compose down
     workingDirectory: '$(modulePath)'
     displayName: 'Run Unit Test'
 
@@ -71,6 +91,6 @@ steps:
       secureFile: hwscdevcontainer_pw.txt
   - script: |
       cat $(Agent.TempDirectory)/hwscdevcontainer_pw.txt | docker login -u "$(hwscDevContainerUser)" --password-stdin
-      docker build --no-cache -f Dockerfile -t hwsc/$(hwscDevImageNameAppGatewaySvc):test .
+      docker build --no-cache -f Dockerfile -t hwsc/$(hwscDevImageNameAppGatewaySvc):$(build.buildId) .
     workingDirectory: '$(modulePath)'
     displayName: 'Build Docker Image Test'

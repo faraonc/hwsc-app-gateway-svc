@@ -8,4 +8,5 @@ const (
 	BasicAuthTag             string = "Basic Auth -"
 	TokenAuthTag             string = "Token Auth -"
 	EmailVerificationTag     string = "Email Verification -"
+	TestTag                  string = "Test -"
 )
