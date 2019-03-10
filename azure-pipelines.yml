@@ -34,8 +34,8 @@ steps:
     displayName: 'Go Get Dependencies'
 
   - task: DownloadSecureFile@1
-      inputs:
-        secureFile: hwsctestgmail_pw.txt # contains info for test gmail
+    inputs:
+      secureFile: hwsctestgmail_pw.txt # contains info for test gmail
 
   - script: |
       PASSWORD=$(cat $(Agent.TempDirectory)/hwsctestgmail_pw.txt)
