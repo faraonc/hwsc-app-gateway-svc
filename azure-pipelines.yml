@@ -37,6 +37,10 @@ steps:
     inputs:
       secureFile: hwsctestgmail_pw.txt # contains info for test gmail
 
+  - script: go build -v .
+    workingDirectory: '$(modulePath)'
+    displayName: 'Build Test'
+
   - script: |
       PASSWORD=$(cat $(Agent.TempDirectory)/hwsctestgmail_pw.txt)
       export hosts_postgres_host="localhost"
@@ -81,10 +85,6 @@ steps:
       reportDirectory: $(System.DefaultWorkingDirectory)/**/coverage
       failIfCoverageEmpty: 'true'
       failOnStandardError: 'true'
-
-  - script: go build -v .
-    workingDirectory: '$(modulePath)'
-    displayName: 'Build Test'
 
   - task: DownloadSecureFile@1
     inputs:
