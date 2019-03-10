@@ -62,7 +62,7 @@ func TestMain(m *testing.M) {
 
 	// run all migration up to the most active
 	if err := migration.Up(); err != nil {
-		logger.Fatal(consts.TestTag, "Failed to load active migration files: %s", err.Error())
+		logger.Fatal(consts.TestTag, "Failed to load active migration files:", err.Error())
 	}
 
 	// start the tests
