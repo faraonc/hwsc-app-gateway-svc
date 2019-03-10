@@ -4,10 +4,13 @@ import (
 	"context"
 	"flag"
 	pbuser "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-user-svc/user"
+	"github.com/hwsc-org/hwsc-api-blocks/int/lib"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	log "github.com/hwsc-org/hwsc-lib/logger"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"os"
 	"os/signal"
 	"syscall"
@@ -92,8 +95,10 @@ func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	}
 	// not guaranteed that we are connected, but return the error and try reconnecting again later
 	resp, err := svc.client.GetStatus(context.TODO(), &pbuser.UserRequest{})
-	if err != nil {
-		return nil, err
+	st, ok := status.FromError(err)
+	if !ok {
+		log.Error(consts.UserClientTag, st.Message())
+		return nil, status.Error(st.Code(), st.Message())
 	}
 	return resp, nil
 }
@@ -103,9 +108,61 @@ func (svc *userService) authenticateUser(email string, password string) (*pbuser
 		return nil, err
 	}
 	// not guaranteed that we are connected, but return the error and try reconnecting again later
-	resp, err := svc.client.AuthenticateUser(context.TODO(), &pbuser.UserRequest{})
-	if err != nil {
+	resp, err := svc.client.AuthenticateUser(
+		context.TODO(),
+		&pbuser.UserRequest{
+			User: &lib.User{
+				Email:    email,
+				Password: password,
+			},
+		},
+	)
+	st, ok := status.FromError(err)
+	if !ok {
+		log.Error(consts.UserClientTag, st.Message())
+		return nil, status.Error(codes.Unauthenticated, st.Message())
+	}
+	return resp, nil
+}
+
+func (svc *userService) verifyAuthToken(token string) (*pbuser.UserResponse, error) {
+	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
+	}
+	// not guaranteed that we are connected, but return the error and try reconnecting again later
+	resp, err := svc.client.VerifyAuthToken(
+		context.TODO(),
+		&pbuser.UserRequest{
+			Identification: &lib.Identification{
+				Token: token,
+			},
+		},
+	)
+	st, ok := status.FromError(err)
+	if !ok {
+		log.Error(consts.UserClientTag, st.Message())
+		return nil, status.Error(codes.Unauthenticated, st.Message())
+	}
+	return resp, nil
+}
+
+func (svc *userService) verifyEmailToken(token string) (*pbuser.UserResponse, error) {
+	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
+		return nil, err
+	}
+	// not guaranteed that we are connected, but return the error and try reconnecting again later
+	resp, err := svc.client.VerifyEmailToken(
+		context.TODO(),
+		&pbuser.UserRequest{
+			Identification: &lib.Identification{
+				Token: token,
+			},
+		},
+	)
+	st, ok := status.FromError(err)
+	if !ok {
+		log.Error(consts.UserClientTag, st.Message())
+		return nil, status.Error(st.Code(), st.Message())
 	}
 	return resp, nil
 }

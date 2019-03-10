@@ -5,7 +5,7 @@ require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/gogo/protobuf v1.2.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
-	github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190309200705-8cb295a95360
+	github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190310005949-b5f1015e6e2a
 	github.com/hwsc-org/hwsc-lib v0.0.0-20190309204043-da9821f84284
 	github.com/micro/go-config v0.14.0
 	github.com/stretchr/testify v1.3.0

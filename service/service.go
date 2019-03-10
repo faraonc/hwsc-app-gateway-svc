@@ -127,16 +127,6 @@ func (s *Service) GetAuthToken(ctx context.Context, req *pbsvc.AppGatewayService
 	}, nil
 }
 
-// VerifyEmailToken verifies the user registration
-// Returns a TODO
-func (s *Service) VerifyEmailToken(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
-	// TODO
-	return &pbsvc.AppGatewayServiceResponse{
-		Status:  &pbsvc.AppGatewayServiceResponse_Code{Code: uint32(codes.OK)},
-		Message: codes.OK.String(),
-	}, nil
-}
-
 // ListUsers retrieves all the users
 // Returns a collection of users
 func (s *Service) ListUsers(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
