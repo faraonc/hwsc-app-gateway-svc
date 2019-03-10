@@ -1,0 +1,101 @@
+trigger:
+  - ext
+
+pr: none
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+variables:
+  - name: GOBIN
+    value: '$(GOPATH)/bin' # Go binaries path
+  - name: GOROOT
+    value: '/usr/local/go1.11' # Go installation path
+  - name: GOPATH
+    value: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+  - name: modulePath
+    value: '$(GOPATH)/$(build.repository.name)'
+  - group: hwsc-dev-container-vars
+  - group: hwsc-user-svc-env-vars
+
+steps:
+  - script: |
+      mkdir -p '$(GOBIN)'
+      mkdir -p '$(GOPATH)/pkg'
+      mkdir -p '$(modulePath)'
+      shopt -s extglob
+      mv !(gopath) '$(modulePath)'
+      echo '##vso[task.prependpath]$(GOBIN)'
+      echo '##vso[task.prependpath]$(GOROOT)/bin'
+    displayName: 'Set Up the Go Workspace'
+
+  - script: go get -v -t -d ./...
+    workingDirectory: '$(modulePath)'
+    displayName: 'Go Get Dependencies'
+
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: hwsctestgmail_pw.txt # contains info for test gmail
+
+  - script: go build -v .
+    workingDirectory: '$(modulePath)'
+    displayName: 'Build Go Executable Test'
+
+  - script: |
+      PASSWORD=$(cat $(Agent.TempDirectory)/hwsctestgmail_pw.txt)
+      export hosts_postgres_host="localhost"
+      export hosts_postgres_db="test_user_svc"
+      export hosts_postgres_user="postgres"
+      export hosts_postgres_password="secret"
+      export hosts_postgres_sslmode="disable"
+      export hosts_postgres_port="5432"
+      export hosts_smtp_host=$(testGmailHost)
+      export hosts_smtp_port=$(testGmailPort)
+      export hosts_smtp_username=$(testGmailUser)
+      export hosts_smtp_password=$PASSWORD
+      docker-compose up -d
+      go test -v -cover -race ./...
+      docker-compose down
+      docker-compose up -d
+      go get github.com/jstemmer/go-junit-report
+      go get github.com/axw/gocov/gocov
+      go get github.com/AlekSi/gocov-xml
+      go test -coverprofile=coverage.out -v -race -covermode atomic ./... 2>&1 | go-junit-report > report.xml
+      gocov convert coverage.out | gocov-xml > coverage.xml
+      mkdir -p coverage/official-tool
+      go tool cover -html=coverage.out -o coverage/official-tool/coverage.html
+      go get -u github.com/matm/gocov-html
+      gocov convert coverage.out > coverage.json
+      gocov-html < coverage.json > coverage/index.html
+      docker-compose down
+    workingDirectory: '$(modulePath)'
+    displayName: 'Run Unit Test'
+
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: JUnit
+      testResultsFiles: $(System.DefaultWorkingDirectory)/**/report.xml
+      failTaskOnFailedTests: 'true'
+      failOnStandardError: 'true'
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
+      reportDirectory: $(System.DefaultWorkingDirectory)/**/coverage
+      failIfCoverageEmpty: 'true'
+      failOnStandardError: 'true'
+
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: hwscdevcontainer_pw.txt
+  - script: |
+      cat $(Agent.TempDirectory)/hwscdevcontainer_pw.txt | docker login -u "$(hwscDevContainerUser)" --password-stdin
+      docker build --no-cache -f Dockerfile -t hwsc/hwsc-app-gateway-svc:ext .
+    workingDirectory: '$(modulePath)'
+    displayName: 'Build Docker Image External Release'
+
+  - script: |
+      docker push hwsc/hwsc-app-gateway-svc:ext
+    workingDirectory: '$(modulePath)'
+    displayName: 'Push Docker Image External Release'
