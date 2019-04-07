@@ -23,6 +23,8 @@ steps:
       mkdir -p '$(GOBIN)'
       mkdir -p '$(GOPATH)/pkg'
       mkdir -p '$(modulePath)'
+      docker pull postgres:alpine
+      docker pull hwsc/hwsc-user-svc:int
       shopt -s extglob
       mv !(gopath) '$(modulePath)'
       echo '##vso[task.prependpath]$(GOBIN)'
