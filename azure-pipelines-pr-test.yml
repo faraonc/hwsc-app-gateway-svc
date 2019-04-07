@@ -45,6 +45,9 @@ steps:
 
   - script: |
       PASSWORD=$(cat $(Agent.TempDirectory)/hwsctestgmail_pw.txt)
+      export hosts_user_address=""
+      export hosts_user_port="50052"
+      export hosts_user_network="tcp"
       export hosts_postgres_host="localhost"
       export hosts_postgres_db="test_user_svc"
       export hosts_postgres_user="postgres"
