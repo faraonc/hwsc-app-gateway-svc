@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
-	pbsvc "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/app"
+	pbsvc "github.com/hwsc-org/hwsc-api-blocks/protobuf/hwsc-app-gateway-svc/app"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	svc "github.com/hwsc-org/hwsc-app-gateway-svc/service"

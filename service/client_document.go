@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"flag"
-	pbdoc "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-document-svc/document"
+	pbdoc "github.com/hwsc-org/hwsc-api-blocks/protobuf/hwsc-document-svc/document"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	log "github.com/hwsc-org/hwsc-lib/logger"

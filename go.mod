@@ -5,8 +5,8 @@ require (
 	github.com/gogo/protobuf v1.2.1 // indirect
 	github.com/golang-migrate/migrate/v4 v4.2.4
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
-	github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190310005949-b5f1015e6e2a
-	github.com/hwsc-org/hwsc-lib v0.0.0-20190310025208-3fdfffd010d3
+	github.com/hwsc-org/hwsc-api-blocks v0.0.0-20190406044749-deacca11cbd7
+	github.com/hwsc-org/hwsc-lib v0.0.0-20190401004322-783e42349378
 	github.com/micro/go-config v0.14.0
 	github.com/stretchr/testify v1.3.0
 	golang.org/x/net v0.0.0-20190310014029-b774fd8d5c0f

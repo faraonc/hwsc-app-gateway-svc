@@ -6,7 +6,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	pbsvc "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-app-gateway-svc/app"
+	pbsvc "github.com/hwsc-org/hwsc-api-blocks/protobuf/hwsc-app-gateway-svc/app"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	"github.com/hwsc-org/hwsc-lib/hosts"
 	"github.com/hwsc-org/hwsc-lib/logger"

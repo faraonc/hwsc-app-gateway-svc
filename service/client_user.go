@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"flag"
-	pbuser "github.com/hwsc-org/hwsc-api-blocks/int/hwsc-user-svc/user"
-	"github.com/hwsc-org/hwsc-api-blocks/int/lib"
+	pbuser "github.com/hwsc-org/hwsc-api-blocks/protobuf/hwsc-user-svc/user"
+	"github.com/hwsc-org/hwsc-api-blocks/protobuf/lib"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	log "github.com/hwsc-org/hwsc-lib/logger"

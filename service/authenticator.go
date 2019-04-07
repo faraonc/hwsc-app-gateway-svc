@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"encoding/base64"
-	"github.com/hwsc-org/hwsc-api-blocks/int/lib"
+	"github.com/hwsc-org/hwsc-api-blocks/protobuf/lib"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	pbauth "github.com/hwsc-org/hwsc-lib/auth"
 	log "github.com/hwsc-org/hwsc-lib/logger"
