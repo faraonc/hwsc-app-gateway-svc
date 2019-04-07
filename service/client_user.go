@@ -7,6 +7,7 @@ import (
 	"github.com/hwsc-org/hwsc-api-blocks/protobuf/lib"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/conf"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
+	"github.com/hwsc-org/hwsc-lib/auth"
 	log "github.com/hwsc-org/hwsc-lib/logger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -103,6 +104,34 @@ func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	return resp, nil
 }
 
+func (svc *userService) makeNewAuthSecret() error {
+	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
+		return err
+	}
+	// not guaranteed that we are connected, but return the error and try reconnecting again later
+	_, err := svc.client.MakeNewAuthSecret(context.TODO(), &pbuser.UserRequest{})
+	st, ok := status.FromError(err)
+	if !ok {
+		log.Error(consts.UserClientTag, st.Message())
+		return status.Error(st.Code(), st.Message())
+	}
+	return nil
+}
+
+func (svc *userService) getAuthSecret() (*lib.Secret, error) {
+	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
+		return nil, err
+	}
+	// not guaranteed that we are connected, but return the error and try reconnecting again later
+	resp, err := svc.client.GetAuthSecret(context.TODO(), &pbuser.UserRequest{})
+	st, ok := status.FromError(err)
+	if !ok {
+		log.Error(consts.UserClientTag, st.Message())
+		return nil, status.Error(st.Code(), st.Message())
+	}
+	return resp.Identification.Secret, nil
+}
+
 func (svc *userService) authenticateUser(email string, password string) (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
@@ -165,4 +194,15 @@ func (svc *userService) verifyEmailToken(token string) (*pbuser.UserResponse, er
 		return nil, status.Error(st.Code(), st.Message())
 	}
 	return resp, nil
+}
+
+func (svc *userService) refreshCurrAuthSecret() error {
+	if err := auth.ValidateSecret(currAuthSecret); err != nil {
+		err = nil
+		currAuthSecret, err = userSvc.getAuthSecret()
+		if err != nil {
+			return consts.ErrUnableToUpdateAuthSecret
+		}
+	}
+	return nil
 }

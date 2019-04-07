@@ -86,7 +86,7 @@ func tryTokenAuth(ctx context.Context) (context.Context, error) {
 		return ctx, status.Error(codes.Unauthenticated, st.Message())
 	}
 
-	return finalizeAuth(consts.TokenAuthTag, resp.Identification, ctx)
+	return finalizeAuth(ctx, consts.TokenAuthTag, resp.Identification)
 }
 
 // tryBasicAuth checks if browser intends to authenticate using a base64 encoded "email:password"
@@ -127,12 +127,12 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 		return ctx, status.Error(codes.Unauthenticated, st.Message())
 	}
 
-	return finalizeAuth(consts.BasicAuthTag, resp.Identification, ctx)
+	return finalizeAuth(ctx, consts.BasicAuthTag, resp.Identification)
 }
 
 // finalizeAuth validates the Identification, and sanitizes the context with the token.
 // Returns a context with token or an error.
-func finalizeAuth(tag string, id *lib.Identification, ctx context.Context) (context.Context, error) {
+func finalizeAuth(ctx context.Context, tag string, id *lib.Identification) (context.Context, error) {
 	if strings.TrimSpace(tag) == "" {
 		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingTag.Error())
 	}
