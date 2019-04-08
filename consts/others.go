@@ -6,6 +6,6 @@ const (
 	StrEmailTokenVerificationPrefix string = "Email Token "
 	StrBasicAuthAttempt             string = "Basic Auth Attempt"
 	StrTokenAuthAttempt             string = "Token Auth Attempt"
-	StrMdBasicAuthHeader            string = "Authorization"
+	StrMdBasicAuthHeader            string = "authorization"
 	StrMdAuthToken                  string = "auth_token"
 )
