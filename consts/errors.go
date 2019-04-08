@@ -12,4 +12,7 @@ var (
 	ErrMultipleAuthHeaders       = errors.New("more than 1 header in request")
 	ErrMissingHeader             = errors.New("missing header")
 	ErrMissingTag                = errors.New("missing tag")
+	//ErrNilRequest                = errors.New("nil request")
+	//ErrNilUserRequest            = errors.New("nil UserRequest/User")
+	ErrUnableToUpdateAuthSecret  = errors.New("unable to update auth secret")
 )

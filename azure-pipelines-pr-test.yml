@@ -23,6 +23,8 @@ steps:
       mkdir -p '$(GOBIN)'
       mkdir -p '$(GOPATH)/pkg'
       mkdir -p '$(modulePath)'
+      docker pull postgres:alpine
+      docker pull hwsc/hwsc-user-svc:int
       shopt -s extglob
       mv !(gopath) '$(modulePath)'
       echo '##vso[task.prependpath]$(GOBIN)'
@@ -43,6 +45,9 @@ steps:
 
   - script: |
       PASSWORD=$(cat $(Agent.TempDirectory)/hwsctestgmail_pw.txt)
+      export hosts_user_address=""
+      export hosts_user_port="50052"
+      export hosts_user_network="tcp"
       export hosts_postgres_host="localhost"
       export hosts_postgres_db="test_user_svc"
       export hosts_postgres_user="postgres"
@@ -54,6 +59,7 @@ steps:
       export hosts_smtp_username=$(testGmailUser)
       export hosts_smtp_password=$PASSWORD
       docker-compose up -d
+      sleep 10
       go test -v -cover -race ./...
       docker-compose down
       docker-compose up -d
