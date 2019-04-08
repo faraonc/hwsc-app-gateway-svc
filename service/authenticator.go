@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"github.com/hwsc-org/hwsc-api-blocks/protobuf/lib"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	pbauth "github.com/hwsc-org/hwsc-lib/auth"
@@ -17,28 +18,25 @@ import (
 // Email Token is also authenticated to complete email verification.
 // Return a context used for the authentication.
 func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
-	newCtx, err = tryEmailTokenVerification(ctx)
-	if err == nil {
+	log.Info(consts.AuthTag, fmt.Sprintf("%v", ctx))
+	newCtx, errEmailToken := tryEmailTokenVerification(ctx)
+	if errEmailToken == nil {
 		return newCtx, nil
 	}
 	// TODO
-	//err = a.tryTLSAuth(ctx)
-	//if err == nil {
-	//	return ctx, nil
+	//newCtx, errTLSAuth := a.tryTLSAuth(ctx)
+	//if errTLSAuth == nil {
+	//	return newCtx, nil
 	//}
-
-	newCtx, err = tryTokenAuth(ctx)
-	if err == nil {
+	newCtx, errTokenAuth := tryTokenAuth(ctx)
+	if errTokenAuth == nil {
 		return newCtx, nil
 	}
-
-	newCtx, err = tryBasicAuth(ctx)
-	if err == nil {
+	newCtx, errBasicAuth := tryBasicAuth(ctx)
+	if errBasicAuth == nil {
 		return newCtx, nil
 	}
-
-	//TODO remove when we don't want to support insecure dialing
-	return context.TODO(), nil
+	return context.TODO(), consts.StatusUnauthenticated
 }
 
 // tryEmailTokenVerification checks if browser intends to verify an email.
@@ -48,6 +46,7 @@ func tryEmailTokenVerification(ctx context.Context) (context.Context, error) {
 	log.Info(consts.EmailVerificationTag, consts.StrTokenAuthAttempt)
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
+		log.Error(consts.EmailVerificationTag, err.Error())
 		return ctx, err
 	}
 	if !strings.HasPrefix(auth, consts.StrEmailTokenVerificationPrefix) {
@@ -56,9 +55,9 @@ func tryEmailTokenVerification(ctx context.Context) (context.Context, error) {
 	log.Info(consts.EmailVerificationTag, auth)
 
 	_, err = userSvc.verifyEmailToken(auth[len(consts.StrEmailTokenVerificationPrefix):])
-	st, ok := status.FromError(err)
-	if !ok {
-		log.Error(consts.EmailVerificationTag, st.Message())
+	if err != nil {
+		log.Error(consts.EmailVerificationTag, err.Error())
+		st, _ := status.FromError(err)
 		return ctx, status.Error(st.Code(), st.Message())
 	}
 
@@ -72,6 +71,7 @@ func tryTokenAuth(ctx context.Context) (context.Context, error) {
 	log.Info(consts.TokenAuthTag, consts.StrTokenAuthAttempt)
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
+		log.Error(consts.TokenAuthTag, err.Error())
 		return ctx, err
 	}
 	if !strings.HasPrefix(auth, consts.StrTokenAuthPrefix) {
@@ -80,9 +80,9 @@ func tryTokenAuth(ctx context.Context) (context.Context, error) {
 	log.Info(consts.TokenAuthTag, auth)
 
 	resp, err := userSvc.verifyAuthToken(auth[len(consts.StrTokenAuthPrefix):])
-	st, ok := status.FromError(err)
-	if !ok {
-		log.Error(consts.TokenAuthTag, st.Message())
+	if err != nil {
+		log.Error(consts.TokenAuthTag, err.Error())
+		st, _ := status.FromError(err)
 		return ctx, status.Error(codes.Unauthenticated, st.Message())
 	}
 
@@ -121,12 +121,11 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 
 	// validate with user service here
 	resp, err := userSvc.authenticateUser(emailPassword[:s], emailPassword[s+1:])
-	st, ok := status.FromError(err)
-	if !ok {
-		log.Error(consts.BasicAuthTag, st.Message())
+	if err != nil {
+		log.Error(consts.BasicAuthTag, err.Error())
+		st, _ := status.FromError(err)
 		return ctx, status.Error(codes.Unauthenticated, st.Message())
 	}
-
 	return finalizeAuth(ctx, consts.BasicAuthTag, resp.Identification)
 }
 
@@ -161,7 +160,7 @@ func extractContextHeader(ctx context.Context, header string) (string, error) {
 	}
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", status.Error(codes.Unauthenticated, consts.ErrMissingAuthHeadersFromCtx.Error())
+		return "", status.Error(codes.Unauthenticated, consts.ErrMissingHeadersFromCtx.Error())
 	}
 	authHeaders, ok := md[header]
 	if !ok {
