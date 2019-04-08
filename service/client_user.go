@@ -10,8 +10,6 @@ import (
 	"github.com/hwsc-org/hwsc-lib/auth"
 	log "github.com/hwsc-org/hwsc-lib/logger"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"os"
 	"os/signal"
 	"syscall"
@@ -96,10 +94,9 @@ func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	}
 	// not guaranteed that we are connected, but return the error and try reconnecting again later
 	resp, err := svc.client.GetStatus(context.TODO(), &pbuser.UserRequest{})
-	st, ok := status.FromError(err)
-	if !ok {
-		log.Error(consts.UserClientTag, st.Message())
-		return nil, status.Error(st.Code(), st.Message())
+	if err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return nil, err
 	}
 	return resp, nil
 }
@@ -110,10 +107,9 @@ func (svc *userService) makeNewAuthSecret() error {
 	}
 	// not guaranteed that we are connected, but return the error and try reconnecting again later
 	_, err := svc.client.MakeNewAuthSecret(context.TODO(), &pbuser.UserRequest{})
-	st, ok := status.FromError(err)
-	if !ok {
-		log.Error(consts.UserClientTag, st.Message())
-		return status.Error(st.Code(), st.Message())
+	if err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return err
 	}
 	return nil
 }
@@ -124,10 +120,9 @@ func (svc *userService) getAuthSecret() (*lib.Secret, error) {
 	}
 	// not guaranteed that we are connected, but return the error and try reconnecting again later
 	resp, err := svc.client.GetAuthSecret(context.TODO(), &pbuser.UserRequest{})
-	st, ok := status.FromError(err)
-	if !ok {
-		log.Error(consts.UserClientTag, st.Message())
-		return nil, status.Error(st.Code(), st.Message())
+	if err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return nil, err
 	}
 	return resp.Identification.Secret, nil
 }
@@ -146,10 +141,9 @@ func (svc *userService) authenticateUser(email string, password string) (*pbuser
 			},
 		},
 	)
-	st, ok := status.FromError(err)
-	if !ok {
-		log.Error(consts.UserClientTag, st.Message())
-		return nil, status.Error(codes.Unauthenticated, st.Message())
+	if err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return nil, err
 	}
 	return resp, nil
 }
@@ -167,10 +161,9 @@ func (svc *userService) verifyAuthToken(token string) (*pbuser.UserResponse, err
 			},
 		},
 	)
-	st, ok := status.FromError(err)
-	if !ok {
-		log.Error(consts.UserClientTag, st.Message())
-		return nil, status.Error(codes.Unauthenticated, st.Message())
+	if err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return nil, err
 	}
 	return resp, nil
 }
@@ -188,10 +181,9 @@ func (svc *userService) verifyEmailToken(token string) (*pbuser.UserResponse, er
 			},
 		},
 	)
-	st, ok := status.FromError(err)
-	if !ok {
-		log.Error(consts.UserClientTag, st.Message())
-		return nil, status.Error(st.Code(), st.Message())
+	if err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return nil, err
 	}
 	return resp, nil
 }

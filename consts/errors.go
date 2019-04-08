@@ -1,6 +1,10 @@
 package consts
 
-import "errors"
+import (
+	"errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
 
 var (
 	ErrMissingBasicAuthPrefix = errors.New(`missing "Basic " prefix in "authorization" header`)
@@ -15,4 +19,5 @@ var (
 	//ErrNilRequest                = errors.New("nil request")
 	//ErrNilUserRequest            = errors.New("nil UserRequest/User")
 	ErrUnableToUpdateAuthSecret = errors.New("unable to update auth secret")
+	StatusUnauthenticated       = status.Error(codes.Unauthenticated, codes.Unauthenticated.String())
 )
