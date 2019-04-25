@@ -39,6 +39,12 @@ func init() {
 	} else {
 		log.Info(consts.UserClientTag, resp.String())
 	}
+
+	if err := userSvc.refreshCurrAuthSecret(); err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+	}
+	log.Info(consts.UserClientTag, "AuthSecret obtained")
+
 	// Handle Terminate Signal(Ctrl + C)
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
@@ -101,6 +107,8 @@ func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	return resp, nil
 }
 
+// makeNewAuthSecret forces user-svc to replace its current AuthSecret
+// Returns an error from the user-svc
 func (svc *userService) makeNewAuthSecret() error {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return err
@@ -114,6 +122,8 @@ func (svc *userService) makeNewAuthSecret() error {
 	return nil
 }
 
+// getAuthSecret gets the current AuthSecret in user-svc
+// Returns an error from the user-svc
 func (svc *userService) getAuthSecret() (*lib.Secret, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
@@ -188,6 +198,8 @@ func (svc *userService) verifyEmailToken(token string) (*pbuser.UserResponse, er
 	return resp, nil
 }
 
+// refreshCurrAuthSecret refreshes currAuthSecret if it is invalid
+// Returns an error from the user-svc
 func (svc *userService) refreshCurrAuthSecret() error {
 	if err := auth.ValidateSecret(currAuthSecret); err != nil {
 		err = nil
@@ -196,5 +208,16 @@ func (svc *userService) refreshCurrAuthSecret() error {
 			return consts.ErrUnableToUpdateAuthSecret
 		}
 	}
+	return nil
+}
+
+// replaceCurrAuthSecret force to replace currAuthSecret even if still valid
+// Returns an error from the user-svc
+func (svc *userService) replaceCurrAuthSecret() error {
+	newAuthSecret, err := userSvc.getAuthSecret()
+	if err != nil {
+		return consts.ErrUnableToUpdateAuthSecret
+	}
+	currAuthSecret = newAuthSecret
 	return nil
 }

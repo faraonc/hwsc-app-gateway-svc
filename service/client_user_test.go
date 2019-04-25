@@ -8,10 +8,15 @@ import (
 )
 
 func TestMakeNewAuthSecret(t *testing.T) {
+	oldAuthSecret := currAuthSecret
 	assert.Nil(t, userSvc.makeNewAuthSecret())
+	newAuthSecret, err := userSvc.getAuthSecret()
+	assert.Nil(t, err)
+	assert.NotEqual(t, oldAuthSecret, newAuthSecret)
 }
 
-func TestGetAuthAuthSecret(t *testing.T) {
+func TestGetAuthSecret(t *testing.T) {
+	assert.Nil(t, userSvc.makeNewAuthSecret())
 	authSecret, err := userSvc.getAuthSecret()
 	assert.Nil(t, err)
 	assert.NotNil(t, auth.ValidateSecret(authSecret))
@@ -25,6 +30,7 @@ func TestRefreshCurrAuthSecret(t *testing.T) {
 	}{
 		{nil, false, nil},
 		{expiredAuthSecret, false, nil},
+		// this case does not replace the currAuthSecret
 		{validAuthSecret, false, nil},
 	}
 	for _, c := range cases {
@@ -36,4 +42,12 @@ func TestRefreshCurrAuthSecret(t *testing.T) {
 			assert.Nil(t, err)
 		}
 	}
+}
+
+func TestReplaceCurrAuthSecret(t *testing.T) {
+	oldAuthSecret := currAuthSecret
+	assert.Nil(t, userSvc.makeNewAuthSecret())
+	err := userSvc.replaceCurrAuthSecret()
+	assert.Nil(t, err)
+	assert.NotEqual(t, oldAuthSecret, currAuthSecret)
 }
