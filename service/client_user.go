@@ -140,6 +140,7 @@ func (svc *userService) getAuthSecret() (*lib.Secret, error) {
 	return resp.Identification.Secret, nil
 }
 
+// todo test
 func (svc *userService) authenticateUser(email string, password string) (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err

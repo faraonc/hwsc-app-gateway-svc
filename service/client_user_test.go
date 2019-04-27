@@ -22,6 +22,11 @@ func TestGetAuthSecret(t *testing.T) {
 	assert.NotNil(t, auth.ValidateSecret(authSecret))
 }
 
+func TestAuthenticateUser(t *testing.T) {
+	// todo add test with createUser
+
+}
+
 func TestRefreshCurrAuthSecret(t *testing.T) {
 	cases := []struct {
 		input    *pbauth.Secret
