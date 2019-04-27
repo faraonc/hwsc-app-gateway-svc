@@ -65,6 +65,7 @@ type userService struct {
 	userSvcConn *grpc.ClientConn
 }
 
+// todo test
 func (svc *userService) dial() error {
 	svc.userSvcOpts = nil // set to nil for reconnect purposes
 	// TODO
@@ -90,10 +91,12 @@ func (svc *userService) dial() error {
 	return nil
 }
 
+// todo test
 func (svc *userService) getConnection() *grpc.ClientConn {
 	return svc.userSvcConn
 }
 
+// todo test
 func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
@@ -158,6 +161,7 @@ func (svc *userService) authenticateUser(email string, password string) (*pbuser
 	return resp, nil
 }
 
+// todo test
 func (svc *userService) verifyAuthToken(token string) (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
@@ -178,6 +182,7 @@ func (svc *userService) verifyAuthToken(token string) (*pbuser.UserResponse, err
 	return resp, nil
 }
 
+// todo test
 func (svc *userService) verifyEmailToken(token string) (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
