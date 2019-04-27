@@ -65,7 +65,8 @@ type userService struct {
 	userSvcConn *grpc.ClientConn
 }
 
-// todo test
+// dial to user-svc.
+// Returns an error if it exists.
 func (svc *userService) dial() error {
 	svc.userSvcOpts = nil // set to nil for reconnect purposes
 	// TODO
@@ -91,12 +92,12 @@ func (svc *userService) dial() error {
 	return nil
 }
 
-// todo test
+// getConnection returns the grpc client connection
 func (svc *userService) getConnection() *grpc.ClientConn {
 	return svc.userSvcConn
 }
 
-// todo test
+// getStatus enables the client to check the user-svc
 func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err

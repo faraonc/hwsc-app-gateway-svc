@@ -7,6 +7,21 @@ import (
 	"testing"
 )
 
+func TestDial(t *testing.T) {
+	assert.Nil(t, userSvc.userSvcConn.Close(), "test closing connection")
+	assert.Nil(t, userSvc.dial(), "test dialing with error")
+}
+
+func TestGetConnection(t *testing.T) {
+	assert.NotNil(t, userSvc.getConnection())
+}
+
+func Test_getStatus(t *testing.T) {
+	resp, err := userSvc.getStatus()
+	assert.Nil(t, err)
+	assert.NotNil(t, resp)
+}
+
 func TestMakeNewAuthSecret(t *testing.T) {
 	oldAuthSecret := currAuthSecret
 	assert.Nil(t, userSvc.makeNewAuthSecret())
