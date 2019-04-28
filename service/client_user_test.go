@@ -7,22 +7,22 @@ import (
 	"testing"
 )
 
-func TestDial(t *testing.T) {
+func Test_userDial(t *testing.T) {
 	assert.Nil(t, userSvc.userSvcConn.Close(), "test closing connection")
 	assert.Nil(t, userSvc.dial(), "test dialing with error")
 }
 
-func TestGetConnection(t *testing.T) {
+func Test_userGetConnection(t *testing.T) {
 	assert.NotNil(t, userSvc.getConnection())
 }
 
-func Test_getStatus(t *testing.T) {
+func Test_userGetStatus(t *testing.T) {
 	resp, err := userSvc.getStatus()
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
 }
 
-func TestMakeNewAuthSecret(t *testing.T) {
+func Test_makeNewAuthSecret(t *testing.T) {
 	oldAuthSecret := currAuthSecret
 	assert.Nil(t, userSvc.makeNewAuthSecret())
 	newAuthSecret, err := userSvc.getAuthSecret()
@@ -30,14 +30,14 @@ func TestMakeNewAuthSecret(t *testing.T) {
 	assert.NotEqual(t, oldAuthSecret, newAuthSecret)
 }
 
-func TestGetAuthSecret(t *testing.T) {
+func Test_getAuthSecret(t *testing.T) {
 	assert.Nil(t, userSvc.makeNewAuthSecret())
 	authSecret, err := userSvc.getAuthSecret()
 	assert.Nil(t, err)
 	assert.NotNil(t, auth.ValidateSecret(authSecret))
 }
 
-func TestRefreshCurrAuthSecret(t *testing.T) {
+func Test_refreshCurrAuthSecret(t *testing.T) {
 	cases := []struct {
 		input    *pbauth.Secret
 		isExpErr bool
@@ -59,7 +59,7 @@ func TestRefreshCurrAuthSecret(t *testing.T) {
 	}
 }
 
-func TestReplaceCurrAuthSecret(t *testing.T) {
+func Test_replaceCurrAuthSecret(t *testing.T) {
 	oldAuthSecret := currAuthSecret
 	assert.Nil(t, userSvc.makeNewAuthSecret())
 	err := userSvc.replaceCurrAuthSecret()
