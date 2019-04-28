@@ -68,7 +68,7 @@ func (s state) String() string {
 // GetStatus gets the current status of the application gateway
 // TODO integration test
 func (s *Service) GetStatus(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
-	log.Info(consts.AppGatewayServiceTag, "Requesting GetStatus service")
+	log.RequestService("GetStatus")
 
 	// Lock the state for reading
 	serviceStateLocker.lock.RLock()
