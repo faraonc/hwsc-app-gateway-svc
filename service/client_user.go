@@ -92,12 +92,12 @@ func (svc *userService) dial() error {
 	return nil
 }
 
-// getConnection returns the grpc client connection
+// getConnection returns the grpc client connection.
 func (svc *userService) getConnection() *grpc.ClientConn {
 	return svc.userSvcConn
 }
 
-// getStatus enables the client to check the user-svc
+// getStatus enables the client to check the user-svc.
 func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
@@ -111,8 +111,8 @@ func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	return resp, nil
 }
 
-// makeNewAuthSecret forces user-svc to replace its current AuthSecret
-// Returns an error from the user-svc
+// makeNewAuthSecret forces user-svc to replace its current AuthSecret.
+// Returns an error from the user-svc.
 func (svc *userService) makeNewAuthSecret() error {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return err
@@ -126,8 +126,8 @@ func (svc *userService) makeNewAuthSecret() error {
 	return nil
 }
 
-// getAuthSecret gets the current AuthSecret in user-svc
-// Returns an error from the user-svc
+// getAuthSecret gets the current AuthSecret in user-svc.
+// Returns an error from the user-svc.
 func (svc *userService) getAuthSecret() (*lib.Secret, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
@@ -204,8 +204,8 @@ func (svc *userService) verifyEmailToken(token string) (*pbuser.UserResponse, er
 	return resp, nil
 }
 
-// refreshCurrAuthSecret refreshes currAuthSecret if it is invalid
-// Returns an error from the user-svc
+// refreshCurrAuthSecret refreshes currAuthSecret if it is invalid.
+// Returns an error from the user-svc.
 func (svc *userService) refreshCurrAuthSecret() error {
 	if err := auth.ValidateSecret(currAuthSecret); err != nil {
 		err = nil
@@ -217,8 +217,8 @@ func (svc *userService) refreshCurrAuthSecret() error {
 	return nil
 }
 
-// replaceCurrAuthSecret force to replace currAuthSecret even if still valid
-// Returns an error from the user-svc
+// replaceCurrAuthSecret force to replace currAuthSecret even if still valid.
+// Returns an error from the user-svc.
 func (svc *userService) replaceCurrAuthSecret() error {
 	newAuthSecret, err := userSvc.getAuthSecret()
 	if err != nil {
