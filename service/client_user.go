@@ -111,6 +111,21 @@ func (svc *userService) getStatus() (*pbuser.UserResponse, error) {
 	return resp, nil
 }
 
+// createUser creates a user
+// On success, returns user object with password set to empty for security reasons.
+func (svc *userService) createUser(user *lib.User) (*pbuser.UserResponse, error) {
+	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
+		return nil, err
+	}
+	// not guaranteed that we are connected, but return the error and try reconnecting again later
+	resp, err := svc.client.CreateUser(context.TODO(), &pbuser.UserRequest{User: user})
+	if err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return nil, err
+	}
+	return resp, nil
+}
+
 // makeNewAuthSecret forces user-svc to replace its current AuthSecret.
 // Returns an error from the user-svc.
 func (svc *userService) makeNewAuthSecret() error {
