@@ -62,6 +62,14 @@ func TestMain(m *testing.M) {
 	// run all migration up to the most active
 	if err := migration.Up(); err != nil {
 		logger.Error(consts.TestTag, "Failed to load active migration files:", err.Error())
+		// hack to reset DB to default settings with no entries
+		logger.Info(consts.TestTag, "Resetting migration")
+		if downErr := migration.Down(); downErr != nil {
+			logger.Fatal(consts.TestTag, "Failed to migrate down", err.Error())
+		}
+		if upErr := migration.Up(); upErr != nil {
+			logger.Fatal(consts.TestTag, "Failed to load active migration files:", err.Error())
+		}
 	}
 
 	// start the tests

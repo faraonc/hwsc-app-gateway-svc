@@ -2,6 +2,7 @@ module github.com/hwsc-org/hwsc-app-gateway-svc
 
 require (
 	cloud.google.com/go v0.36.0 // indirect
+	github.com/Pallinder/go-randomdata v1.1.0
 	github.com/gogo/protobuf v1.2.1 // indirect
 	github.com/golang-migrate/migrate/v4 v4.2.4
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
