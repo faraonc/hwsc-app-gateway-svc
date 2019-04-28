@@ -86,7 +86,7 @@ func Test_userCreateUser(t *testing.T) {
 		} else {
 			assert.Nil(t, err, c.desc)
 			assert.NotNil(t, resp.GetUser().GetUuid(), c.desc)
-			assert.Equal(t, auth.PermissionStringMap[auth.NoPermission], resp.GetUser().GetPermissionLevel())
+			assert.Equal(t, auth.PermissionStringMap[auth.NoPermission], resp.GetUser().GetPermissionLevel(), c.desc)
 		}
 	}
 }
