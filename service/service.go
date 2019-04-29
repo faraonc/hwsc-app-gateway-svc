@@ -7,6 +7,7 @@ import (
 	log "github.com/hwsc-org/hwsc-lib/logger"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"os"
 	"os/signal"
 	"sync"
@@ -92,10 +93,26 @@ func (s *Service) GetStatus(ctx context.Context, req *pbsvc.AppGatewayServiceReq
 // CreateUser creates a user
 // Returns the user with password field set to empty string
 func (s *Service) CreateUser(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
-	// TODO
+	log.RequestService("CreateUser")
+
+	if ok := isStateAvailable(); !ok {
+		log.Info(consts.AppGatewayServiceTag, consts.ErrServiceUnavailable.Error())
+		return nil, status.Error(codes.Unavailable, consts.ErrServiceUnavailable.Error())
+	}
+
+	if req == nil || req.GetUserRequest() == nil || req.GetUserRequest().GetUser() == nil {
+		log.Error(consts.AppGatewayServiceTag, consts.ErrNilRequest.Error())
+		return nil, status.Error(codes.InvalidArgument, consts.ErrNilRequest.Error())
+	}
+	resp, err := userSvc.createUser(req.GetUserRequest().GetUser())
+	if err != nil {
+		log.Error(consts.AppGatewayServiceTag, err.Error())
+		return nil, err
+	}
 	return &pbsvc.AppGatewayServiceResponse{
 		Status:  &pbsvc.AppGatewayServiceResponse_Code{Code: uint32(codes.OK)},
 		Message: codes.OK.String(),
+		User:    resp.GetUser(),
 	}, nil
 }
 

@@ -7,6 +7,8 @@ import (
 )
 
 var (
+	ErrServiceUnavailable     = errors.New("service is unavailable")
+	ErrNilRequest             = errors.New("nil request")
 	ErrMissingBasicAuthPrefix = errors.New(`missing "Basic " prefix in "authorization" header`)
 	ErrMissingTokenPrefix     = errors.New(`missing "<type> Token " prefix in "authorization" header`)
 	ErrInvalidBase64Header    = errors.New("invalid base64 in header")
