@@ -156,6 +156,8 @@ func (svc *userService) getAuthSecret() (*lib.Secret, error) {
 	return resp.Identification.Secret, nil
 }
 
+// authenticateUser authenticates user with email and password.
+// On success, returns a JWT and User.
 func (svc *userService) authenticateUser(email string, password string) (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err

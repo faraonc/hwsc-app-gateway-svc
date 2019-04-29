@@ -106,6 +106,67 @@ func Test_getAuthSecret(t *testing.T) {
 	assert.NotNil(t, auth.ValidateSecret(authSecret))
 }
 
+func Test_authenticateUser(t *testing.T) {
+	validEmail := randomdata.Email()
+	validPassword := "Abcd!123@"
+	_, err := userSvc.createUser(
+		&pblib.User{
+			FirstName:    randomdata.FirstName(randomdata.Male),
+			LastName:     randomdata.LastName(),
+			Email:        validEmail,
+			Password:     validPassword,
+			Organization: "TestOrg",
+		})
+	assert.Nil(t, err, "Test_authenticateUser")
+	cases := []struct {
+		desc     string
+		email    string
+		password string
+		isExpErr bool
+		errStr   string
+	}{
+		{
+			"Test for non-existing user",
+			randomdata.Email(),
+			"ASD1231!",
+			true,
+			"rpc error: code = Unauthenticated desc = email does not exist in db",
+		},
+		{
+			"Test for missing email",
+			"",
+			"ASD1231!",
+			true,
+			"rpc error: code = InvalidArgument desc = invalid User email",
+		},
+		{
+			"Test for missing password",
+			validEmail,
+			"",
+			true,
+			"rpc error: code = InvalidArgument desc = invalid User password",
+		},
+		{
+			"Test for valid email password",
+			validEmail,
+			validPassword,
+			false,
+			"",
+		},
+	}
+	for _, c := range cases {
+		resp, err := userSvc.authenticateUser(c.email, c.password)
+		if c.isExpErr {
+			assert.EqualError(t, err, c.errStr, c.desc)
+		} else {
+			assert.Nil(t, err, c.desc)
+			assert.NotNil(t, resp, c.desc)
+			assert.Equal(t, c.email, resp.GetUser().GetEmail(), c.desc)
+			assert.Empty(t, resp.GetUser().GetPassword(), c.desc)
+		}
+	}
+}
+
 func Test_refreshCurrAuthSecret(t *testing.T) {
 	cases := []struct {
 		input    *pblib.Secret
