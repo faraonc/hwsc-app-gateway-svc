@@ -169,6 +169,51 @@ func Test_authenticateUser(t *testing.T) {
 	}
 }
 
+func Test_verifyAuthToken(t *testing.T) {
+	validEmail := randomdata.Email()
+	validPassword := "Abcd!123@"
+	resp, errCreateUser := userSvc.createUser(
+		&pblib.User{
+			FirstName:    randomdata.FirstName(randomdata.Male),
+			LastName:     randomdata.LastName(),
+			Email:        validEmail,
+			Password:     validPassword,
+			Organization: "TestOrg",
+		})
+	assert.Nil(t, errCreateUser, "Test_verifyAuthToken")
+	assert.NotNil(t, resp, "Test_verifyAuthToken")
+	//TODO verify email
+	resp, errAuthenticateUser := userSvc.authenticateUser(validEmail, validPassword)
+	assert.Nil(t, errAuthenticateUser, "Test_verifyAuthToken")
+	assert.NotNil(t, resp, "Test_verifyAuthToken")
+	authToken := resp.GetIdentification().GetToken()
+	authSecret := resp.GetIdentification().GetSecret()
+	cases := []struct {
+		desc     string
+		token    string
+		isExpErr bool
+		errStr   string
+	}{
+		{
+			"Test for valid auth token",
+			authToken,
+			false,
+			"",
+		},
+	}
+	for _, c := range cases {
+		resp, err := userSvc.verifyAuthToken(c.token)
+		if c.isExpErr {
+			assert.EqualError(t, err, c.errStr)
+			assert.Nil(t, resp)
+		} else {
+			assert.Nil(t, err)
+			assert.Equal(t, c.token, resp.GetIdentification().GetToken())
+			assert.Equal(t, authSecret, resp.GetIdentification().GetSecret())
+		}
+	}
+}
+
 func Test_refreshCurrAuthSecret(t *testing.T) {
 	cases := []struct {
 		input    *pblib.Secret
