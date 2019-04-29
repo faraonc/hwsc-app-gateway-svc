@@ -153,6 +153,12 @@ func (svc *userService) getAuthSecret() (*lib.Secret, error) {
 		log.Error(consts.UserClientTag, err.Error())
 		return nil, err
 	}
+	newSecret := resp.GetIdentification().GetSecret()
+	if err := auth.ValidateSecret(newSecret); err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return nil, err
+	}
+	currAuthSecret = newSecret
 	return resp.Identification.Secret, nil
 }
 
@@ -176,10 +182,17 @@ func (svc *userService) authenticateUser(email string, password string) (*pbuser
 		log.Error(consts.UserClientTag, err.Error())
 		return nil, err
 	}
+	newSecret := resp.GetIdentification().GetSecret()
+	if err := auth.ValidateSecret(newSecret); err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return nil, err
+	}
+	currAuthSecret = newSecret
 	return resp, nil
 }
 
-// todo test
+// verifyAuthToken checks if auth token or JWT is valid.
+// On success, returns JWT and paired secret.
 func (svc *userService) verifyAuthToken(token string) (*pbuser.UserResponse, error) {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
 		return nil, err
@@ -197,6 +210,12 @@ func (svc *userService) verifyAuthToken(token string) (*pbuser.UserResponse, err
 		log.Error(consts.UserClientTag, err.Error())
 		return nil, err
 	}
+	newSecret := resp.GetIdentification().GetSecret()
+	if err := auth.ValidateSecret(newSecret); err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return nil, err
+	}
+	currAuthSecret = newSecret
 	return resp, nil
 }
 

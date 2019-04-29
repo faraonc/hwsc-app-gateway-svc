@@ -101,9 +101,10 @@ func Test_makeNewAuthSecret(t *testing.T) {
 
 func Test_getAuthSecret(t *testing.T) {
 	assert.Nil(t, userSvc.makeNewAuthSecret())
-	authSecret, err := userSvc.getAuthSecret()
+	newSecret, err := userSvc.getAuthSecret()
 	assert.Nil(t, err)
-	assert.NotNil(t, auth.ValidateSecret(authSecret))
+	assert.Nil(t, auth.ValidateSecret(newSecret))
+	assert.Equal(t, currAuthSecret, newSecret)
 }
 
 func Test_authenticateUser(t *testing.T) {
@@ -163,6 +164,7 @@ func Test_authenticateUser(t *testing.T) {
 			assert.NotNil(t, resp, c.desc)
 			assert.Equal(t, c.email, resp.GetUser().GetEmail(), c.desc)
 			assert.Empty(t, resp.GetUser().GetPassword(), c.desc)
+			assert.Equal(t, currAuthSecret, resp.GetIdentification().GetSecret(), c.desc)
 		}
 	}
 }
