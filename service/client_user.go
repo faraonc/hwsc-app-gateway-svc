@@ -219,13 +219,14 @@ func (svc *userService) verifyAuthToken(token string) (*pbuser.UserResponse, err
 	return resp, nil
 }
 
-// todo test
-func (svc *userService) verifyEmailToken(token string) (*pbuser.UserResponse, error) {
+// verifyEmailToken verifies a prospective email.
+// Returns an error if email token verification fails.
+func (svc *userService) verifyEmailToken(token string) error {
 	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
-		return nil, err
+		return err
 	}
 	// not guaranteed that we are connected, but return the error and try reconnecting again later
-	resp, err := svc.client.VerifyEmailToken(
+	_, err := svc.client.VerifyEmailToken(
 		context.TODO(),
 		&pbuser.UserRequest{
 			Identification: &lib.Identification{
@@ -235,9 +236,9 @@ func (svc *userService) verifyEmailToken(token string) (*pbuser.UserResponse, er
 	)
 	if err != nil {
 		log.Error(consts.UserClientTag, err.Error())
-		return nil, err
+		return err
 	}
-	return resp, nil
+	return nil
 }
 
 // refreshCurrAuthSecret refreshes currAuthSecret if it is invalid.

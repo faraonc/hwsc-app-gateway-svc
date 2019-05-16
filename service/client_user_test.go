@@ -182,7 +182,10 @@ func Test_verifyAuthToken(t *testing.T) {
 		})
 	assert.Nil(t, errCreateUser, "Test_verifyAuthToken")
 	assert.NotNil(t, resp, "Test_verifyAuthToken")
-	//TODO verify email
+	// verify email
+	err := userSvc.verifyEmailToken(resp.GetIdentification().GetToken())
+	assert.Nil(t, err, "verify the email")
+
 	resp, errAuthenticateUser := userSvc.authenticateUser(validEmail, validPassword)
 	assert.Nil(t, errAuthenticateUser, "Test_verifyAuthToken")
 	assert.NotNil(t, resp, "Test_verifyAuthToken")
@@ -200,6 +203,7 @@ func Test_verifyAuthToken(t *testing.T) {
 			false,
 			"",
 		},
+		// TODO more test cases
 	}
 	for _, c := range cases {
 		resp, err := userSvc.verifyAuthToken(c.token)
@@ -212,6 +216,10 @@ func Test_verifyAuthToken(t *testing.T) {
 			assert.Equal(t, authSecret, resp.GetIdentification().GetSecret())
 		}
 	}
+}
+
+func Test_verifyEmailToken(t *testing.T) {
+	// TODO
 }
 
 func Test_refreshCurrAuthSecret(t *testing.T) {

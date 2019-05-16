@@ -54,7 +54,7 @@ func tryEmailTokenVerification(ctx context.Context) (context.Context, error) {
 	}
 	log.Info(consts.EmailVerificationTag, auth)
 
-	_, err = userSvc.verifyEmailToken(auth[len(consts.StrEmailTokenVerificationPrefix):])
+	err = userSvc.verifyEmailToken(auth[len(consts.StrEmailTokenVerificationPrefix):])
 	if err != nil {
 		log.Error(consts.EmailVerificationTag, err.Error())
 		st, _ := status.FromError(err)
