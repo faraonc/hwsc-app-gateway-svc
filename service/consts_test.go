@@ -21,4 +21,6 @@ var (
 		CreatedTimestamp:    time.Unix(validCreatedTimestamp, 0).AddDate(-1, 0, 0).UTC().Unix(),
 		ExpirationTimestamp: validExpirationTimestamp,
 	}
+
+	fakeAuthToken = "eyJBbGciOjEsIlRva2VuVHlwIjoxfQ.eyJVVUlEIjoiMTFkM3gzd20ybm5yZGZ6cDB0a2Eydnc5ZHgiLCJQZXJtaXNzaW9uIjoyLCJFeHBpcmF0aW9uVGltZXN0YW1wIjoxODkzNDU2MDAwfQ.e5-zlHh02bJeZ7rVGuSVVTUG1k1L_aKKRddXXojpcxI="
 )

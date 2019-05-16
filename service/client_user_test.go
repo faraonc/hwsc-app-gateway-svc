@@ -183,7 +183,8 @@ func Test_verifyAuthToken(t *testing.T) {
 	assert.Nil(t, errCreateUser, "Test_verifyAuthToken")
 	assert.NotNil(t, resp, "Test_verifyAuthToken")
 	// verify email
-	err := userSvc.verifyEmailToken(resp.GetIdentification().GetToken())
+	emailToken := resp.GetIdentification().GetToken()
+	err := userSvc.verifyEmailToken(emailToken)
 	assert.Nil(t, err, "verify the email")
 
 	resp, errAuthenticateUser := userSvc.authenticateUser(validEmail, validPassword)
@@ -203,7 +204,24 @@ func Test_verifyAuthToken(t *testing.T) {
 			false,
 			"",
 		},
-		// TODO more test cases
+		{
+			"Test for invalid token type",
+			emailToken,
+			true,
+			"rpc error: code = Unauthenticated desc = no matching auth token were found with given token",
+		},
+		{
+			"Test for empty string",
+			"",
+			true,
+			"rpc error: code = Unauthenticated desc = empty token string",
+		},
+		{
+			"Test for fake token",
+			fakeAuthToken,
+			true,
+			"rpc error: code = Unauthenticated desc = no matching auth token were found with given token",
+		},
 	}
 	for _, c := range cases {
 		resp, err := userSvc.verifyAuthToken(c.token)
