@@ -35,6 +35,7 @@ func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
 	if errBasicAuth == nil {
 		return newCtx, nil
 	}
+	// TODO return values will change once authentication is required
 	return context.TODO(), consts.StatusUnauthenticated
 }
 
@@ -42,14 +43,15 @@ func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
 // The header has a format of "authorization": "Email Token " + token
 // Returns a context with no token or an error.
 func tryEmailTokenVerification(ctx context.Context) (context.Context, error) {
-	log.Info(consts.EmailVerificationTag, consts.StrTokenAuthAttempt)
+	log.Info(consts.EmailVerificationTag, consts.StrEmailTokenVerificationAttempt)
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.EmailVerificationTag, err.Error())
 		return ctx, err
 	}
 	if !strings.HasPrefix(auth, consts.StrEmailTokenVerificationPrefix) {
-		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingTokenPrefix.Error())
+		log.Error(consts.EmailVerificationTag, consts.ErrMissingEmailTokenPrefix.Error())
+		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingEmailTokenPrefix.Error())
 	}
 	log.Info(consts.EmailVerificationTag, auth)
 
@@ -67,14 +69,15 @@ func tryEmailTokenVerification(ctx context.Context) (context.Context, error) {
 // The header has a format of "authorization": "Auth Token " + token.
 // Returns a context with token or an error.
 func tryTokenAuth(ctx context.Context) (context.Context, error) {
-	log.Info(consts.TokenAuthTag, consts.StrTokenAuthAttempt)
+	log.Info(consts.TokenAuthTag, consts.StrAuthTokenAttempt)
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.TokenAuthTag, err.Error())
 		return ctx, err
 	}
 	if !strings.HasPrefix(auth, consts.StrTokenAuthPrefix) {
-		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingTokenPrefix.Error())
+		log.Error(consts.TokenAuthTag, consts.ErrMissingAuthTokenPrefix.Error())
+		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingAuthTokenPrefix.Error())
 	}
 	log.Info(consts.TokenAuthTag, auth)
 

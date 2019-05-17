@@ -13,19 +13,66 @@ import (
 )
 
 func TestAuthenticate(t *testing.T) {
-	///*
-	//	Test for error cases
-	//*/
-	//errCases := []struct {
-	//	desc       string
-	//	authHeader string
-	//	authPrefix string
-	//	input      string
-	//	isExpErr   bool
-	//	errStr     string
-	//}{
-	//
-	//}
+	/*
+		Test for error cases
+	*/
+	errCases := []struct {
+		desc       string
+		authHeader string
+		authPrefix string
+		mdKey      string
+		input      string
+		isExpErr   bool
+		errStr     string
+	}{
+		{
+			"test missing auth header",
+			"",
+			consts.StrBasicAuthPrefix,
+			consts.StrMdAuthToken,
+			randomdata.Email() + ":" + "Qwert!123@",
+			true,
+			"rpc error: code = Unauthenticated desc = Unauthenticated",
+		},
+		{
+			"test wrong auth header",
+			"abcde",
+			consts.StrBasicAuthPrefix,
+			consts.StrMdAuthToken,
+			randomdata.Email() + ":" + "Qwert!123@",
+			true,
+			"rpc error: code = Unauthenticated desc = Unauthenticated",
+		},
+		{
+			"test missing basic prefix",
+			consts.StrMdBasicAuthHeader,
+			"",
+			consts.StrMdAuthToken,
+			randomdata.Email() + ":" + "Qwert!123@",
+			true,
+			"rpc error: code = Unauthenticated desc = Unauthenticated",
+		},
+		// TODO more test cases
+	}
+	for _, c := range errCases {
+		enc := base64.StdEncoding.EncodeToString([]byte(c.input))
+
+		header := metadata.New(map[string]string{
+			c.authHeader: c.authPrefix + enc,
+		})
+		ctx := metadata.NewIncomingContext(context.Background(), header)
+		respCtx, err := Authenticate(ctx)
+		if c.isExpErr {
+			assert.EqualError(t, err, c.errStr, c.desc)
+		} else {
+			assert.Nil(t, err, c.desc)
+			md, ok := metadata.FromIncomingContext(respCtx)
+			assert.True(t, ok, c.desc)
+			token, ok := md[c.mdKey]
+			assert.True(t, ok, c.desc)
+			assert.Equal(t, 1, len(token), c.desc)
+		}
+	}
 	/*
 		Test for basic authentication
 	*/
