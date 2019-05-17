@@ -14,66 +14,6 @@ import (
 
 func TestAuthenticate(t *testing.T) {
 	/*
-		Test for error cases
-	*/
-	errCases := []struct {
-		desc       string
-		authHeader string
-		authPrefix string
-		mdKey      string
-		input      string
-		isExpErr   bool
-		errStr     string
-	}{
-		{
-			"test missing auth header",
-			"",
-			consts.StrBasicAuthPrefix,
-			consts.StrMdAuthToken,
-			randomdata.Email() + ":" + "Qwert!123@",
-			true,
-			"rpc error: code = Unauthenticated desc = Unauthenticated",
-		},
-		{
-			"test wrong auth header",
-			"abcde",
-			consts.StrBasicAuthPrefix,
-			consts.StrMdAuthToken,
-			randomdata.Email() + ":" + "Qwert!123@",
-			true,
-			"rpc error: code = Unauthenticated desc = Unauthenticated",
-		},
-		{
-			"test missing basic prefix",
-			consts.StrMdBasicAuthHeader,
-			"",
-			consts.StrMdAuthToken,
-			randomdata.Email() + ":" + "Qwert!123@",
-			true,
-			"rpc error: code = Unauthenticated desc = Unauthenticated",
-		},
-		// TODO more test cases
-	}
-	for _, c := range errCases {
-		enc := base64.StdEncoding.EncodeToString([]byte(c.input))
-
-		header := metadata.New(map[string]string{
-			c.authHeader: c.authPrefix + enc,
-		})
-		ctx := metadata.NewIncomingContext(context.Background(), header)
-		respCtx, err := Authenticate(ctx)
-		if c.isExpErr {
-			assert.EqualError(t, err, c.errStr, c.desc)
-		} else {
-			assert.Nil(t, err, c.desc)
-			md, ok := metadata.FromIncomingContext(respCtx)
-			assert.True(t, ok, c.desc)
-			token, ok := md[c.mdKey]
-			assert.True(t, ok, c.desc)
-			assert.Equal(t, 1, len(token), c.desc)
-		}
-	}
-	/*
 		Test for basic authentication
 	*/
 	validEmail := randomdata.Email()
@@ -126,7 +66,87 @@ func TestAuthenticate(t *testing.T) {
 	assert.True(t, incomingAuthTokenOk3, "TestAuthenticate create valid user - incoming auth token3 OK")
 	assert.Equal(t, 1, len(incomingAuthToken3), "TestAuthenticate create valid user - incoming auth token3")
 
+	/*
+		Test for error cases
+	*/
+	cases := []struct {
+		desc       string
+		authHeader string
+		authPrefix string
+		mdKey      string
+		input      string
+		isExpErr   bool
+		errStr     string
+	}{
+		{
+			"test missing auth header",
+			"",
+			consts.StrBasicAuthPrefix,
+			consts.StrMdAuthToken,
+			randomdata.Email() + ":" + "Qwert!123@",
+			true,
+			consts.StatusUnauthenticated.Error(),
+		},
+		{
+			"test wrong auth header",
+			"wrong",
+			consts.StrBasicAuthPrefix,
+			consts.StrMdAuthToken,
+			randomdata.Email() + ":" + "Qwert!123@",
+			true,
+			consts.StatusUnauthenticated.Error(),
+		},
+		{
+			"test missing auth prefix",
+			consts.StrMdBasicAuthHeader,
+			"",
+			consts.StrMdAuthToken,
+			randomdata.Email() + ":" + "Qwert!123@",
+			true,
+			consts.StatusUnauthenticated.Error(),
+		},
+		{
+			"test wrong auth prefix",
+			consts.StrMdBasicAuthHeader,
+			"wrong",
+			consts.StrMdAuthToken,
+			randomdata.Email() + ":" + "Qwert!123@",
+			true,
+			consts.StatusUnauthenticated.Error(),
+		},
+		{
+			"test wrong password",
+			consts.StrMdBasicAuthHeader,
+			consts.StrBasicAuthPrefix,
+			consts.StrMdAuthToken,
+			validEmail + ":" + "invalidPassword!123",
+			true,
+			consts.StatusUnauthenticated.Error(),
+		},
+		// TODO more test cases
+	}
+	for _, c := range cases {
+		enc := base64.StdEncoding.EncodeToString([]byte(c.input))
+
+		header := metadata.New(map[string]string{
+			c.authHeader: c.authPrefix + enc,
+		})
+		ctx := metadata.NewIncomingContext(context.Background(), header)
+		respCtx, err := Authenticate(ctx)
+		if c.isExpErr {
+			assert.EqualError(t, err, c.errStr, c.desc)
+		} else {
+			assert.Nil(t, err, c.desc)
+			md, ok := metadata.FromIncomingContext(respCtx)
+			assert.True(t, ok, c.desc)
+			token, ok := md[c.mdKey]
+			assert.True(t, ok, c.desc)
+			assert.Equal(t, 1, len(token), c.desc)
+		}
+	}
+
 	// TODO more test cases
+
 }
 
 func TestTryEmailTokenVerification(t *testing.T) {
