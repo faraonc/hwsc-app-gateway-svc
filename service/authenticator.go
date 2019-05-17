@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"github.com/hwsc-org/hwsc-api-blocks/protobuf/lib"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	pbauth "github.com/hwsc-org/hwsc-lib/auth"
@@ -18,7 +17,7 @@ import (
 // Email Token is also authenticated to complete email verification.
 // Return a context used for the authentication.
 func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
-	log.Info(consts.AuthTag, fmt.Sprintf("%v", ctx))
+	log.RequestService(consts.AuthTag)
 	newCtx, errEmailToken := tryEmailTokenVerification(ctx)
 	if errEmailToken == nil {
 		return newCtx, nil

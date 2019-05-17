@@ -40,10 +40,13 @@ func init() {
 		log.Info(consts.UserClientTag, resp.String())
 	}
 
+	// TODO handle refreshing in case auth secret is missing
 	if err := userSvc.refreshCurrAuthSecret(); err != nil {
+		// NOTE: Check PSQL migration or if there is an active secret
 		log.Error(consts.UserClientTag, err.Error())
+	} else {
+		log.Info(consts.UserClientTag, "AuthSecret obtained")
 	}
-	log.Info(consts.UserClientTag, "AuthSecret obtained")
 
 	// Handle Terminate Signal(Ctrl + C)
 	c := make(chan os.Signal)
