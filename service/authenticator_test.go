@@ -34,7 +34,7 @@ func TestAuthenticate(t *testing.T) {
 	validEnc := base64.StdEncoding.EncodeToString([]byte(validEmail + ":" + validPassword))
 
 	header := metadata.New(map[string]string{
-		"authorization": "Basic " + validEnc,
+		consts.StrMdBasicAuthHeader: consts.StrBasicAuthPrefix + validEnc,
 	})
 	validOutgoingCtx := metadata.NewIncomingContext(context.Background(), header)
 
@@ -65,6 +65,45 @@ func TestAuthenticate(t *testing.T) {
 	incomingAuthToken3, incomingAuthTokenOk3 := incomingMd3[consts.StrMdAuthToken]
 	assert.True(t, incomingAuthTokenOk3, "TestAuthenticate create valid user - incoming auth token3 OK")
 	assert.Equal(t, 1, len(incomingAuthToken3), "TestAuthenticate create valid user - incoming auth token3")
+
+	/*
+		Test for auth token
+	*/
+	authHeader := metadata.New(map[string]string{
+		consts.StrMdBasicAuthHeader: consts.StrTokenAuthPrefix + incomingAuthToken3[0],
+	})
+	authOutgoingCtx := metadata.NewIncomingContext(context.Background(), authHeader)
+	authIncomingCtx, errAuth := Authenticate(authOutgoingCtx)
+	assert.Nil(t, errAuth, "TestAuthenticate auth token - no err")
+	authMd, authOk := metadata.FromIncomingContext(authIncomingCtx)
+	assert.True(t, authOk, "TestAuthenticate auth token - incoming ctx OK")
+	authToken, authTokenOk := authMd[consts.StrMdAuthToken]
+	assert.True(t, authTokenOk, "TestAuthenticate create auth token - incoming auth token OK")
+	assert.Equal(t, 1, len(authToken), "TestAuthenticate auth token - incoming auth token")
+	assert.Equal(t, authToken[0], incomingAuthToken3[0], "TestAuthenticate auth token - same token")
+
+	/*
+		Test for email token verification
+	*/
+	newEmailVerificationUserEmail := randomdata.Email()
+	newEmailVerificationUserPassword := "Abcd!123@"
+	newEmailVerificationResp, errNewEmailVerificationCreateUser := userSvc.createUser(
+		&pblib.User{
+			FirstName:    randomdata.FirstName(randomdata.Male),
+			LastName:     randomdata.LastName(),
+			Email:        newEmailVerificationUserEmail,
+			Password:     newEmailVerificationUserPassword,
+			Organization: "TestOrg",
+		})
+	assert.Nil(t, errNewEmailVerificationCreateUser, "TestAuthenticate email token verification - no err")
+	assert.NotNil(t, newEmailVerificationResp, "TestAuthenticate email token verification - resp not nil")
+	newEmailVerificationToken := newEmailVerificationResp.GetIdentification().GetToken()
+	newEmailVerificationHeader := metadata.New(map[string]string{
+		consts.StrMdBasicAuthHeader: consts.StrEmailTokenVerificationPrefix + newEmailVerificationToken,
+	})
+	newEmailVerificationOutgoingCtx := metadata.NewIncomingContext(context.Background(), newEmailVerificationHeader)
+	_, errNewEmailVerification := Authenticate(newEmailVerificationOutgoingCtx)
+	assert.Nil(t, errNewEmailVerification, "TestAuthenticate email token verification - success")
 
 	/*
 		Test for error cases
@@ -123,7 +162,24 @@ func TestAuthenticate(t *testing.T) {
 			true,
 			consts.StatusUnauthenticated.Error(),
 		},
-		// TODO more test cases
+		{
+			"test fake auth token",
+			consts.StrMdBasicAuthHeader,
+			consts.StrTokenAuthPrefix,
+			consts.StrMdAuthToken,
+			fakeAuthToken,
+			true,
+			consts.StatusUnauthenticated.Error(),
+		},
+		{
+			"test fake email token",
+			consts.StrMdBasicAuthHeader,
+			consts.StrEmailTokenVerificationPrefix,
+			consts.StrTokenAuthPrefix,
+			fakeAuthToken,
+			true,
+			consts.StatusUnauthenticated.Error(),
+		},
 	}
 	for _, c := range cases {
 		enc := base64.StdEncoding.EncodeToString([]byte(c.input))
@@ -144,9 +200,6 @@ func TestAuthenticate(t *testing.T) {
 			assert.Equal(t, 1, len(token), c.desc)
 		}
 	}
-
-	// TODO more test cases
-
 }
 
 func TestTryEmailTokenVerification(t *testing.T) {
