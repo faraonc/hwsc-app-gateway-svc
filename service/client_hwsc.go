@@ -45,7 +45,9 @@ func refreshConnection(client hwscClient, tag string) error {
 	}
 	conn := client.getConnection()
 	if conn == nil || !isHealthy(conn, tag) {
+		log.Info(tag, "Refreshing connection")
 		if err := client.dial(); err != nil {
+			log.Error(tag, "Fail refreshing connection")
 			return err
 		}
 	}
