@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	log "github.com/hwsc-org/hwsc-lib/logger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"
@@ -39,6 +40,9 @@ func isHealthy(conn *grpc.ClientConn, tag string) bool {
 }
 
 func refreshConnection(client hwscClient, tag string) error {
+	if client == nil {
+		return consts.ErrNilHwscGrpcClient
+	}
 	conn := client.getConnection()
 	if conn == nil || !isHealthy(conn, tag) {
 		if err := client.dial(); err != nil {
