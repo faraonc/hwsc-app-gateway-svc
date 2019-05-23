@@ -323,5 +323,26 @@ func TestExtractContextHeader(t *testing.T) {
 }
 
 func TestPurgeContextHeader(t *testing.T) {
+	nilIncomingCtxCase := "test for nil incoming context"
+	actOutput, err := purgeContextHeader(nil, "")
+	assert.EqualError(t, err, consts.ErrNilContext.Error(), nilIncomingCtxCase)
+	assert.Nil(t, actOutput, nilIncomingCtxCase)
 
+	missingHeaderCase := "test for missing header"
+	actOutput, err = purgeContextHeader(context.TODO(), "")
+	assert.EqualError(t, err, consts.ErrMissingHeader.Error(), missingHeaderCase)
+	assert.Nil(t, actOutput, missingHeaderCase)
+
+	validCase := "test for valid context"
+	header := metadata.New(map[string]string{
+		consts.StrMdBasicAuthHeader: consts.StrBasicAuthPrefix + placeholder,
+	})
+	ctx := metadata.NewIncomingContext(context.Background(), header)
+	newCtx, err := purgeContextHeader(ctx, consts.StrMdBasicAuthHeader)
+	assert.Nil(t, err, validCase)
+	md, ok := metadata.FromIncomingContext(newCtx)
+	assert.True(t, ok, validCase)
+	authHeader, ok := md[consts.StrMdBasicAuthHeader]
+	assert.True(t, ok, validCase)
+	assert.Nil(t, authHeader, validCase)
 }

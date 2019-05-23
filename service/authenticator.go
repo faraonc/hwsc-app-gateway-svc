@@ -205,5 +205,5 @@ func purgeContextHeader(ctx context.Context, header string) (context.Context, er
 	md, _ := metadata.FromIncomingContext(ctx)
 	mdCopy := md.Copy()
 	mdCopy[header] = nil
-	return metadata.NewIncomingContext(ctx, mdCopy), nil
+	return metadata.NewIncomingContext(context.Background(), mdCopy), nil
 }

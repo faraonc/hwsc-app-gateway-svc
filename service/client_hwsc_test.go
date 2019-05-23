@@ -85,12 +85,12 @@ func TestIsHealthy(t *testing.T) {
 		assert.Equal(t, c.expOutput, actOutput, c.desc)
 	}
 
-	case1 := "test closing userSvc client connection"
-	assert.Nil(t, userSvc.userSvcConn.Close(), case1)
+	closingClientCase := "test closing userSvc client connection"
+	assert.Nil(t, userSvc.userSvcConn.Close(), closingClientCase)
 	output := isHealthy(userSvc.getConnection(), placeholder)
 	assert.Equal(t, false, output, "test health check after setting userSvc to closing transition")
 	err := refreshConnection(userSvc, placeholder)
-	assert.Nil(t, err, case1)
+	assert.Nil(t, err, closingClientCase)
 }
 
 func TestRefreshConnection(t *testing.T) {
@@ -135,9 +135,9 @@ func TestRefreshConnection(t *testing.T) {
 		}
 	}
 
-	case1 := "test refreshing closed userSvc client connection"
-	assert.Nil(t, userSvc.userSvcConn.Close(), case1)
+	refreshCloseClientCase := "test refreshing closed userSvc client connection"
+	assert.Nil(t, userSvc.userSvcConn.Close(), refreshCloseClientCase)
 	err := refreshConnection(userSvc, placeholder)
-	assert.Nil(t, err, case1)
-	assert.NotNil(t, userSvc, case1)
+	assert.Nil(t, err, refreshCloseClientCase)
+	assert.NotNil(t, userSvc, refreshCloseClientCase)
 }
