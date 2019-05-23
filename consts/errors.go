@@ -23,5 +23,6 @@ var (
 	//ErrNilUserRequest            = errors.New("nil UserRequest/User")
 	ErrUnableToUpdateAuthSecret = errors.New("unable to update auth secret")
 	ErrNilHwscGrpcClient        = errors.New("nil hwsc grpc client")
+	ErrNilContext               = errors.New("nil context")
 	StatusUnauthenticated       = status.Error(codes.Unauthenticated, codes.Unauthenticated.String())
 )

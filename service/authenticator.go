@@ -18,6 +18,10 @@ import (
 // Return a context used for the authentication.
 func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
 	log.RequestService(consts.AuthTag)
+	if ctx == nil {
+		log.Error(consts.AuthTag, consts.ErrNilContext.Error())
+		return context.TODO(), consts.ErrNilContext
+	}
 	newCtx, errEmailToken := tryEmailTokenVerification(ctx)
 	if errEmailToken == nil {
 		return newCtx, nil
@@ -44,6 +48,9 @@ func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
 // Returns a context with no token or an error.
 func tryEmailTokenVerification(ctx context.Context) (context.Context, error) {
 	log.Info(consts.EmailVerificationTag, consts.StrEmailTokenVerificationAttempt)
+	if ctx == nil {
+		return context.TODO(), consts.ErrNilContext
+	}
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.EmailVerificationTag, err.Error())
@@ -70,6 +77,9 @@ func tryEmailTokenVerification(ctx context.Context) (context.Context, error) {
 // Returns a context with token or an error.
 func tryTokenAuth(ctx context.Context) (context.Context, error) {
 	log.Info(consts.TokenAuthTag, consts.StrAuthTokenAttempt)
+	if ctx == nil {
+		return context.TODO(), consts.ErrNilContext
+	}
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.TokenAuthTag, err.Error())
@@ -96,6 +106,9 @@ func tryTokenAuth(ctx context.Context) (context.Context, error) {
 // Returns a context with token or an error.
 func tryBasicAuth(ctx context.Context) (context.Context, error) {
 	log.Info(consts.BasicAuthTag, consts.StrBasicAuthAttempt)
+	if ctx == nil {
+		return context.TODO(), consts.ErrNilContext
+	}
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.BasicAuthTag, err.Error())
@@ -134,6 +147,9 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 // finalizeAuth validates the Identification, and sanitizes the context with the token.
 // Returns a context with token or an error.
 func finalizeAuth(ctx context.Context, tag string, id *lib.Identification) (context.Context, error) {
+	if ctx == nil {
+		return context.TODO(), consts.ErrNilContext
+	}
 	if strings.TrimSpace(tag) == "" {
 		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingTag.Error())
 	}
@@ -157,6 +173,9 @@ func finalizeAuth(ctx context.Context, tag string, id *lib.Identification) (cont
 // extractContextHeader extracts the header from the context.
 // Returns the header from the context.
 func extractContextHeader(ctx context.Context, header string) (string, error) {
+	if ctx == nil {
+		return "", consts.ErrNilContext
+	}
 	if strings.TrimSpace(header) == "" {
 		return "", status.Error(codes.Unauthenticated, consts.ErrMissingHeader.Error())
 	}
@@ -177,6 +196,9 @@ func extractContextHeader(ctx context.Context, header string) (string, error) {
 // purgeContextHeader removes a specific header from the context.
 // Returns the sanitized context.
 func purgeContextHeader(ctx context.Context, header string) (context.Context, error) {
+	if ctx == nil {
+		return nil, consts.ErrNilContext
+	}
 	if strings.TrimSpace(header) == "" {
 		return nil, consts.ErrMissingHeader
 	}
