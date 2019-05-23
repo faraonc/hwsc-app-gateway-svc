@@ -24,7 +24,7 @@ func TestAuthenticate(t *testing.T) {
 			LastName:     randomdata.LastName(),
 			Email:        validEmail,
 			Password:     validPassword,
-			Organization: "TestOrg",
+			Organization: testOrg,
 		})
 	assert.Nil(t, errCreateUser, "TestAuthenticate create valid user - no err")
 	assert.NotNil(t, resp, "TestAuthenticate create valid user - resp not nil")
@@ -93,7 +93,7 @@ func TestAuthenticate(t *testing.T) {
 			LastName:     randomdata.LastName(),
 			Email:        newEmailVerificationUserEmail,
 			Password:     newEmailVerificationUserPassword,
-			Organization: "TestOrg",
+			Organization: testOrg,
 		})
 	assert.Nil(t, errNewEmailVerificationCreateUser, "TestAuthenticate email token verification - no err")
 	assert.NotNil(t, newEmailVerificationResp, "TestAuthenticate email token verification - resp not nil")
@@ -237,7 +237,7 @@ func TestExtractContextHeader(t *testing.T) {
 			LastName:     randomdata.LastName(),
 			Email:        validEmail,
 			Password:     validPassword,
-			Organization: "TestOrg",
+			Organization: testOrg,
 		})
 	assert.Nil(t, errCreateUser, "TestAuthenticate create valid user - no err")
 	assert.NotNil(t, resp, "TestAuthenticate create valid user - resp not nil")

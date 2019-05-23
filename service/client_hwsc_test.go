@@ -11,7 +11,7 @@ func TestDisconnect(t *testing.T) {
 	assert.Nil(t, disconnect(nil, placeholder), "test nil input")
 	assert.Nil(t, disconnect(userSvc.getConnection(), placeholder), "test disconnect user svc client")
 	assert.NotNil(t, disconnect(userSvc.getConnection(), placeholder), "test disconnect again")
-	assert.Nil(t, refreshConnection(userSvc, placeholder), "reconnect again no error")
+	assert.Nil(t, refreshConnection(userSvc, placeholder), "test reconnect again with no error")
 
 	cases := []struct {
 		desc      string
@@ -85,11 +85,12 @@ func TestIsHealthy(t *testing.T) {
 		assert.Equal(t, c.expOutput, actOutput, c.desc)
 	}
 
-	assert.Nil(t, userSvc.userSvcConn.Close(), "test close userSvc client connection")
+	case1 := "test closing userSvc client connection"
+	assert.Nil(t, userSvc.userSvcConn.Close(), case1)
 	output := isHealthy(userSvc.getConnection(), placeholder)
-	assert.Equal(t, false, output, "test setting userSvc to nil - err nil")
+	assert.Equal(t, false, output, "test health check after setting userSvc to closing transition")
 	err := refreshConnection(userSvc, placeholder)
-	assert.Nil(t, err, "test close userSvc client connection - err nil")
+	assert.Nil(t, err, case1)
 }
 
 func TestRefreshConnection(t *testing.T) {
@@ -134,8 +135,9 @@ func TestRefreshConnection(t *testing.T) {
 		}
 	}
 
-	assert.Nil(t, userSvc.userSvcConn.Close(), "test close userSvc client connection")
+	case1 := "test refreshing closed userSvc client connection"
+	assert.Nil(t, userSvc.userSvcConn.Close(), case1)
 	err := refreshConnection(userSvc, placeholder)
-	assert.Nil(t, err, "test close userSvc client connection - err nil")
-	assert.NotNil(t, userSvc, "test close userSvc client connection - userSvc not nil")
+	assert.Nil(t, err, case1)
+	assert.NotNil(t, userSvc, case1)
 }
