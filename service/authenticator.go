@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"github.com/hwsc-org/hwsc-api-blocks/protobuf/lib"
 	"github.com/hwsc-org/hwsc-app-gateway-svc/consts"
 	pbauth "github.com/hwsc-org/hwsc-lib/auth"
@@ -18,7 +17,11 @@ import (
 // Email Token is also authenticated to complete email verification.
 // Return a context used for the authentication.
 func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
-	log.Info(consts.AuthTag, fmt.Sprintf("%v", ctx))
+	log.RequestService(consts.AuthTag)
+	if ctx == nil {
+		log.Error(consts.AuthTag, consts.ErrNilContext.Error())
+		return context.TODO(), consts.ErrNilContext
+	}
 	newCtx, errEmailToken := tryEmailTokenVerification(ctx)
 	if errEmailToken == nil {
 		return newCtx, nil
@@ -36,6 +39,7 @@ func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
 	if errBasicAuth == nil {
 		return newCtx, nil
 	}
+	// TODO return values will change once authentication is required
 	return context.TODO(), consts.StatusUnauthenticated
 }
 
@@ -43,18 +47,22 @@ func Authenticate(ctx context.Context) (newCtx context.Context, err error) {
 // The header has a format of "authorization": "Email Token " + token
 // Returns a context with no token or an error.
 func tryEmailTokenVerification(ctx context.Context) (context.Context, error) {
-	log.Info(consts.EmailVerificationTag, consts.StrTokenAuthAttempt)
+	log.Info(consts.EmailVerificationTag, consts.StrEmailTokenVerificationAttempt)
+	if ctx == nil {
+		return context.TODO(), consts.ErrNilContext
+	}
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.EmailVerificationTag, err.Error())
 		return ctx, err
 	}
 	if !strings.HasPrefix(auth, consts.StrEmailTokenVerificationPrefix) {
-		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingTokenPrefix.Error())
+		log.Error(consts.EmailVerificationTag, consts.ErrMissingEmailTokenPrefix.Error())
+		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingEmailTokenPrefix.Error())
 	}
 	log.Info(consts.EmailVerificationTag, auth)
 
-	_, err = userSvc.verifyEmailToken(auth[len(consts.StrEmailTokenVerificationPrefix):])
+	err = userSvc.verifyEmailToken(auth[len(consts.StrEmailTokenVerificationPrefix):])
 	if err != nil {
 		log.Error(consts.EmailVerificationTag, err.Error())
 		st, _ := status.FromError(err)
@@ -68,14 +76,18 @@ func tryEmailTokenVerification(ctx context.Context) (context.Context, error) {
 // The header has a format of "authorization": "Auth Token " + token.
 // Returns a context with token or an error.
 func tryTokenAuth(ctx context.Context) (context.Context, error) {
-	log.Info(consts.TokenAuthTag, consts.StrTokenAuthAttempt)
+	log.Info(consts.TokenAuthTag, consts.StrAuthTokenAttempt)
+	if ctx == nil {
+		return context.TODO(), consts.ErrNilContext
+	}
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.TokenAuthTag, err.Error())
 		return ctx, err
 	}
 	if !strings.HasPrefix(auth, consts.StrTokenAuthPrefix) {
-		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingTokenPrefix.Error())
+		log.Error(consts.TokenAuthTag, consts.ErrMissingAuthTokenPrefix.Error())
+		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingAuthTokenPrefix.Error())
 	}
 	log.Info(consts.TokenAuthTag, auth)
 
@@ -94,6 +106,9 @@ func tryTokenAuth(ctx context.Context) (context.Context, error) {
 // Returns a context with token or an error.
 func tryBasicAuth(ctx context.Context) (context.Context, error) {
 	log.Info(consts.BasicAuthTag, consts.StrBasicAuthAttempt)
+	if ctx == nil {
+		return context.TODO(), consts.ErrNilContext
+	}
 	auth, err := extractContextHeader(ctx, consts.StrMdBasicAuthHeader)
 	if err != nil {
 		log.Error(consts.BasicAuthTag, err.Error())
@@ -132,6 +147,9 @@ func tryBasicAuth(ctx context.Context) (context.Context, error) {
 // finalizeAuth validates the Identification, and sanitizes the context with the token.
 // Returns a context with token or an error.
 func finalizeAuth(ctx context.Context, tag string, id *lib.Identification) (context.Context, error) {
+	if ctx == nil {
+		return context.TODO(), consts.ErrNilContext
+	}
 	if strings.TrimSpace(tag) == "" {
 		return ctx, status.Error(codes.Unauthenticated, consts.ErrMissingTag.Error())
 	}
@@ -155,6 +173,9 @@ func finalizeAuth(ctx context.Context, tag string, id *lib.Identification) (cont
 // extractContextHeader extracts the header from the context.
 // Returns the header from the context.
 func extractContextHeader(ctx context.Context, header string) (string, error) {
+	if ctx == nil {
+		return "", consts.ErrNilContext
+	}
 	if strings.TrimSpace(header) == "" {
 		return "", status.Error(codes.Unauthenticated, consts.ErrMissingHeader.Error())
 	}
@@ -175,11 +196,14 @@ func extractContextHeader(ctx context.Context, header string) (string, error) {
 // purgeContextHeader removes a specific header from the context.
 // Returns the sanitized context.
 func purgeContextHeader(ctx context.Context, header string) (context.Context, error) {
+	if ctx == nil {
+		return nil, consts.ErrNilContext
+	}
 	if strings.TrimSpace(header) == "" {
 		return nil, consts.ErrMissingHeader
 	}
 	md, _ := metadata.FromIncomingContext(ctx)
 	mdCopy := md.Copy()
 	mdCopy[header] = nil
-	return metadata.NewIncomingContext(ctx, mdCopy), nil
+	return metadata.NewIncomingContext(context.Background(), mdCopy), nil
 }

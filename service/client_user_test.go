@@ -8,24 +8,25 @@ import (
 	"testing"
 )
 
-func Test_userDial(t *testing.T) {
-	assert.Nil(t, userSvc.userSvcConn.Close(), "test closing connection")
-	assert.Nil(t, userSvc.dial(), "test dialing with error")
+func TestClientUserSvcDial(t *testing.T) {
+	err := userSvc.userSvcConn.Close()
+	assert.Nil(t, err, "test closing connection")
+	err = userSvc.dial()
+	assert.Nil(t, err, "test dialing with after closing connection")
 }
 
-func Test_userGetConnection(t *testing.T) {
+func TestClientUserGetConnection(t *testing.T) {
 	assert.NotNil(t, userSvc.getConnection())
 }
 
-func Test_userGetStatus(t *testing.T) {
+func TestClientUserGetStatus(t *testing.T) {
 	resp, err := userSvc.getStatus()
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
 }
 
-func Test_userCreateUser(t *testing.T) {
+func TestClientUserCreateUser(t *testing.T) {
 	validEmail := randomdata.Email()
-
 	cases := []struct {
 		desc     string
 		user     *pblib.User
@@ -33,31 +34,31 @@ func Test_userCreateUser(t *testing.T) {
 		errStr   string
 	}{
 		{
-			"Test for valid user registration",
+			"test for valid user registration",
 			&pblib.User{
 				FirstName:    randomdata.FirstName(randomdata.Male),
 				LastName:     randomdata.LastName(),
 				Email:        validEmail,
 				Password:     "Abcd!123@",
-				Organization: "TestOrg",
+				Organization: testOrg,
 			},
 			false,
 			"",
 		},
 		{
-			"Test for duplicate user email",
+			"test for duplicate user email",
 			&pblib.User{
 				FirstName:    randomdata.FirstName(randomdata.Male),
 				LastName:     randomdata.LastName(),
 				Email:        validEmail,
 				Password:     "Abcd!123@",
-				Organization: "TestOrg",
+				Organization: testOrg,
 			},
 			true,
 			`rpc error: code = Internal desc = pq: duplicate key value violates unique constraint "accounts_email_key"`,
 		},
 		{
-			"Test for empty string",
+			"test for input empty string",
 			&pblib.User{
 				FirstName: "",
 			},
@@ -65,13 +66,13 @@ func Test_userCreateUser(t *testing.T) {
 			"rpc error: code = Internal desc = invalid User first name",
 		},
 		{
-			"Test for missing password",
+			"test for missing password",
 			&pblib.User{
 				FirstName:    randomdata.FirstName(randomdata.Male),
 				LastName:     randomdata.LastName(),
 				Email:        validEmail,
 				Password:     "",
-				Organization: "TestOrg",
+				Organization: testOrg,
 			},
 			true,
 			"rpc error: code = Internal desc = invalid User password",
@@ -91,7 +92,7 @@ func Test_userCreateUser(t *testing.T) {
 	}
 }
 
-func Test_makeNewAuthSecret(t *testing.T) {
+func TestClientMakeNewAuthSecret(t *testing.T) {
 	oldAuthSecret := currAuthSecret
 	assert.Nil(t, userSvc.makeNewAuthSecret())
 	newAuthSecret, err := userSvc.getAuthSecret()
@@ -99,15 +100,15 @@ func Test_makeNewAuthSecret(t *testing.T) {
 	assert.NotEqual(t, oldAuthSecret, newAuthSecret)
 }
 
-func Test_getAuthSecret(t *testing.T) {
+func TestClientGetAuthSecret(t *testing.T) {
 	assert.Nil(t, userSvc.makeNewAuthSecret())
 	newSecret, err := userSvc.getAuthSecret()
 	assert.Nil(t, err)
 	assert.Nil(t, auth.ValidateSecret(newSecret))
-	assert.Equal(t, currAuthSecret, newSecret)
+	assert.Equal(t, currAuthSecret, newSecret, "test auth secret is set")
 }
 
-func Test_authenticateUser(t *testing.T) {
+func TestClientAuthenticateUser(t *testing.T) {
 	validEmail := randomdata.Email()
 	validPassword := "Abcd!123@"
 	_, err := userSvc.createUser(
@@ -116,9 +117,9 @@ func Test_authenticateUser(t *testing.T) {
 			LastName:     randomdata.LastName(),
 			Email:        validEmail,
 			Password:     validPassword,
-			Organization: "TestOrg",
+			Organization: testOrg,
 		})
-	assert.Nil(t, err, "Test_authenticateUser")
+	assert.Nil(t, err, "Test_authenticateUser - create valid user")
 	cases := []struct {
 		desc     string
 		email    string
@@ -127,28 +128,28 @@ func Test_authenticateUser(t *testing.T) {
 		errStr   string
 	}{
 		{
-			"Test for non-existing user",
+			"test for non-existing user",
 			randomdata.Email(),
 			"ASD1231!",
 			true,
 			"rpc error: code = Unauthenticated desc = email does not exist in db",
 		},
 		{
-			"Test for missing email",
+			"test for missing email",
 			"",
 			"ASD1231!",
 			true,
 			"rpc error: code = InvalidArgument desc = invalid User email",
 		},
 		{
-			"Test for missing password",
+			"test for missing password",
 			validEmail,
 			"",
 			true,
 			"rpc error: code = InvalidArgument desc = invalid User password",
 		},
 		{
-			"Test for valid email password",
+			"test for valid email password",
 			validEmail,
 			validPassword,
 			false,
@@ -169,29 +170,150 @@ func Test_authenticateUser(t *testing.T) {
 	}
 }
 
-func Test_refreshCurrAuthSecret(t *testing.T) {
+func TestClientVerifyAuthToken(t *testing.T) {
+	validEmail := randomdata.Email()
+	validPassword := "Abcd!123@"
+	resp, err := userSvc.createUser(
+		&pblib.User{
+			FirstName:    randomdata.FirstName(randomdata.Male),
+			LastName:     randomdata.LastName(),
+			Email:        validEmail,
+			Password:     validPassword,
+			Organization: testOrg,
+		})
+	assert.Nil(t, err, "Test_verifyAuthToken")
+	assert.NotNil(t, resp, "Test_verifyAuthToken")
+	emailToken := resp.GetIdentification().GetToken()
+	err = userSvc.verifyEmailToken(emailToken)
+	assert.Nil(t, err, "verify the email")
+
+	resp, err = userSvc.authenticateUser(validEmail, validPassword)
+	assert.Nil(t, err, "Test_verifyAuthToken")
+	assert.NotNil(t, resp, "Test_verifyAuthToken")
+	authToken := resp.GetIdentification().GetToken()
+	authSecret := resp.GetIdentification().GetSecret()
+
 	cases := []struct {
+		desc     string
+		token    string
+		isExpErr bool
+		errStr   string
+	}{
+		{
+			"test for valid auth token",
+			authToken,
+			false,
+			"",
+		},
+		{
+			"test for invalid token type",
+			emailToken,
+			true,
+			"rpc error: code = Unauthenticated desc = no matching auth token were found with given token",
+		},
+		{
+			"test for empty string",
+			"",
+			true,
+			"rpc error: code = Unauthenticated desc = empty token string",
+		},
+		{
+			"test for fake token",
+			fakeAuthToken,
+			true,
+			"rpc error: code = Unauthenticated desc = no matching auth token were found with given token",
+		},
+		{
+			// cannot really test unless we can somehow insert an auth token in the db
+			// may require user-svc changes
+			"test for expired token",
+			expiredUserToken,
+			true,
+			"rpc error: code = Unauthenticated desc = no matching auth token were found with given token",
+		},
+	}
+	for _, c := range cases {
+		resp, err := userSvc.verifyAuthToken(c.token)
+		if c.isExpErr {
+			assert.EqualError(t, err, c.errStr)
+			assert.Nil(t, resp)
+		} else {
+			assert.Nil(t, err)
+			assert.Equal(t, c.token, resp.GetIdentification().GetToken())
+			assert.Equal(t, authSecret, resp.GetIdentification().GetSecret())
+		}
+	}
+}
+
+func TestClientVerifyEmailToken(t *testing.T) {
+	validCase := "test valid email token"
+	validEmail := randomdata.Email()
+	validPassword := "Abcd!123@"
+	resp, err := userSvc.createUser(
+		&pblib.User{
+			FirstName:    randomdata.FirstName(randomdata.Male),
+			LastName:     randomdata.LastName(),
+			Email:        validEmail,
+			Password:     validPassword,
+			Organization: testOrg,
+		})
+	assert.Nil(t, err, validCase)
+	assert.NotNil(t, resp, validCase)
+
+	emailToken := resp.GetIdentification().GetToken()
+	expNilErr := userSvc.verifyEmailToken(emailToken)
+	assert.Nil(t, expNilErr, validCase)
+
+	expErr := userSvc.verifyEmailToken(emailToken)
+	assert.EqualError(t, expErr,
+		"rpc error: code = Internal desc = no matching email token were found with given token",
+		"test verify email token that was already verified")
+
+	err = userSvc.verifyEmailToken("")
+	assert.EqualError(t, err,
+		"rpc error: code = InvalidArgument desc = empty token string",
+		"test for empty string")
+
+}
+
+func TestClientRefreshCurrAuthSecret(t *testing.T) {
+	cases := []struct {
+		desc     string
 		input    *pblib.Secret
 		isExpErr bool
 		err      error
 	}{
-		{nil, false, nil},
-		{expiredAuthSecret, false, nil},
-		// this case does not replace the currAuthSecret
-		{validAuthSecret, false, nil},
+		{
+			"test setting nil current auth secret",
+			nil,
+			false,
+			nil,
+		},
+		{
+			"test setting expired current auth secret",
+			expiredAuthSecret,
+			false,
+			nil,
+		},
+		{
+			"test not replacing a valid current auth secret",
+			validAuthSecret,
+			false,
+			nil,
+		},
 	}
 	for _, c := range cases {
 		currAuthSecret = c.input
 		err := userSvc.refreshCurrAuthSecret()
 		if c.isExpErr {
-			assert.EqualError(t, err, c.err.Error())
+			assert.EqualError(t, err, c.err.Error(), c.desc)
 		} else {
-			assert.Nil(t, err)
+			assert.Nil(t, err, c.desc)
 		}
 	}
 }
 
-func Test_replaceCurrAuthSecret(t *testing.T) {
+func TestClientReplaceCurrAuthSecret(t *testing.T) {
 	oldAuthSecret := currAuthSecret
 	assert.Nil(t, userSvc.makeNewAuthSecret())
 	err := userSvc.replaceCurrAuthSecret()

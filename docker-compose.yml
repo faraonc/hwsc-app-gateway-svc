@@ -2,16 +2,15 @@ version: '3'
 
 services:
   postgres:
-    image: "postgres:alpine"
+    image: "hwsc/hwsc-user-svc-psql:test-int"
+    container_name: "test-postgres"
     ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=$hosts_postgres_password
-      - POSTGRES_DB=$hosts_postgres_db
+      - "${hosts_postgres_port}:${hosts_postgres_port}"
   user-svc:
     image: "hwsc/hwsc-user-svc:int"
+    container_name: "test-user-svc"
     ports:
-      - "50052:50052"
+      - "${hosts_user_port}:${hosts_user_port}"
     environment:
       - hosts_user_address
       - hosts_user_port
