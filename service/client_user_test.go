@@ -238,6 +238,7 @@ func Test_verifyAuthToken(t *testing.T) {
 }
 
 func Test_verifyEmailToken(t *testing.T) {
+	validCase := "test valid email token"
 	validEmail := randomdata.Email()
 	validPassword := "Abcd!123@"
 	resp, err := userSvc.createUser(
@@ -248,22 +249,22 @@ func Test_verifyEmailToken(t *testing.T) {
 			Password:     validPassword,
 			Organization: testOrg,
 		})
-	assert.Nil(t, err, "Test_verifyAuthToken")
-	assert.NotNil(t, resp, "Test_verifyAuthToken")
+	assert.Nil(t, err, validCase)
+	assert.NotNil(t, resp, validCase)
 
 	emailToken := resp.GetIdentification().GetToken()
 	expNilErr := userSvc.verifyEmailToken(emailToken)
-	assert.Nil(t, expNilErr, "verify the email")
+	assert.Nil(t, expNilErr, validCase)
 
 	expErr := userSvc.verifyEmailToken(emailToken)
 	assert.EqualError(t, expErr,
 		"rpc error: code = Internal desc = no matching email token were found with given token",
-		"verify email token that was already verified")
+		"test verify email token that was already verified")
 
 	err = userSvc.verifyEmailToken("")
 	assert.EqualError(t, err,
 		"rpc error: code = InvalidArgument desc = empty token string",
-		"empty string test")
+		"test for empty string")
 
 }
 
