@@ -297,7 +297,7 @@ func TestExtractContextHeader(t *testing.T) {
 			"rpc error: code = Unauthenticated desc = missing header",
 		},
 		{
-			"test missing auth header",
+			"test for valid context",
 			consts.StrMdBasicAuthHeader,
 			consts.StrBasicAuthPrefix,
 			randomdata.Email() + ":" + "Qwert!123@",
