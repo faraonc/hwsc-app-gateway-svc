@@ -30,4 +30,7 @@ var (
 	}
 
 	fakeAuthToken = "eyJBbGciOjEsIlRva2VuVHlwIjoxfQ.eyJVVUlEIjoiMTFkM3gzd20ybm5yZGZ6cDB0a2Eydnc5ZHgiLCJQZXJtaXNzaW9uIjoyLCJFeHBpcmF0aW9uVGltZXN0YW1wIjoxODkzNDU2MDAwfQ.e5-zlHh02bJeZ7rVGuSVVTUG1k1L_aKKRddXXojpcxI="
+	// cannot really test unless we can somehow insert an auth token in the db
+	// may require user-svc changes
+	expiredUserToken = "eyJBbGciOjEsIlRva2VuVHlwIjoxfQ.eyJVVUlEIjoiM2QzeDN3bTJubnJkZnpwMHRrYTJzdnc5ZHgiLCJQZXJtaXNzaW9uIjoyLCJFeHBpcmF0aW9uVGltZXN0YW1wIjoxNDgzMjI4ODAwfQ.XpNCF264jqlW6VnXq4yJPERPY--c3TNkG8fSlu8okPs="
 )

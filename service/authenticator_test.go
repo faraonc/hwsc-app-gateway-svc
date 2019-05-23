@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/base64"
+	"fmt"
 	"github.com/Pallinder/go-randomdata"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	pblib "github.com/hwsc-org/hwsc-api-blocks/protobuf/lib"
@@ -15,7 +16,9 @@ import (
 func TestAuthenticate(t *testing.T) {
 	/*
 		Test for basic authentication
+		registration-to-login process
 	*/
+	// register user
 	baseAuthCase := "test authenticating valid user"
 	validEmail := randomdata.Email()
 	validPassword := "Abcd!123@"
@@ -29,16 +32,18 @@ func TestAuthenticate(t *testing.T) {
 		})
 	assert.Nil(t, errCreateUser, baseAuthCase)
 	assert.NotNil(t, resp, baseAuthCase)
+
+	//verify new user's email
 	emailToken := resp.GetIdentification().GetToken()
 	errVerifyEmailToken := userSvc.verifyEmailToken(emailToken)
 	assert.Nil(t, errVerifyEmailToken, baseAuthCase)
-	validEnc := base64.StdEncoding.EncodeToString([]byte(validEmail + ":" + validPassword))
 
+	// login or Authenticate using email and password
+	validEnc := base64.StdEncoding.EncodeToString([]byte(validEmail + ":" + validPassword))
 	header := metadata.New(map[string]string{
 		consts.StrMdBasicAuthHeader: consts.StrBasicAuthPrefix + validEnc,
 	})
 	validIncomingCtx := metadata.NewIncomingContext(context.Background(), header)
-
 	incomingCtx1, errAuthenticate := Authenticate(validIncomingCtx)
 	assert.Nil(t, errAuthenticate, baseAuthCase)
 	incomingMd1, incomingMdOk1 := metadata.FromIncomingContext(incomingCtx1)
@@ -312,7 +317,13 @@ func TestTryTokenAuth(t *testing.T) {
 	assert.EqualError(t, errNil, consts.ErrNilContext.Error(), nilIncomingCtxCase)
 	assert.Equal(t, context.TODO(), ctxNil, nilIncomingCtxCase)
 
+	/*
+		Test for auth token authentication
+		registration-to-authentication (auth token) process
+	*/
+
 	validCase := "test valid auth token"
+	// register a new user
 	validEmail := randomdata.Email()
 	validPassword := "Abcd!123@"
 	resp, err := userSvc.createUser(
@@ -325,9 +336,13 @@ func TestTryTokenAuth(t *testing.T) {
 		})
 	assert.Nil(t, err, validCase)
 	assert.NotNil(t, resp, validCase)
+
+	// verify new email
 	emailToken := resp.GetIdentification().GetToken()
 	errVerifyEmailToken := userSvc.verifyEmailToken(emailToken)
 	assert.Nil(t, errVerifyEmailToken, validCase)
+
+	// login or Authenticate user to grab auth token
 	validEnc := base64.StdEncoding.EncodeToString([]byte(validEmail + ":" + validPassword))
 	header := metadata.New(map[string]string{
 		consts.StrMdBasicAuthHeader: consts.StrBasicAuthPrefix + validEnc,
@@ -340,6 +355,8 @@ func TestTryTokenAuth(t *testing.T) {
 	incomingAuthToken, incomingAuthTokenOk := incomingMd[consts.StrMdAuthToken]
 	assert.True(t, incomingAuthTokenOk, validCase)
 	assert.Equal(t, 1, len(incomingAuthToken), validCase)
+
+	// authenticate using auth token
 	authHeader := metadata.New(map[string]string{
 		consts.StrMdBasicAuthHeader: consts.StrTokenAuthPrefix + incomingAuthToken[0],
 	})
@@ -497,6 +514,24 @@ func TestTryBasicAuth(t *testing.T) {
 			consts.StrBasicAuthPrefix,
 			consts.StrMdAuthToken,
 			validEmail,
+			true,
+			"rpc error: code = Unauthenticated desc = invalid basic auth format",
+		},
+		{
+			"test with wrong email",
+			consts.StrMdBasicAuthHeader,
+			consts.StrBasicAuthPrefix,
+			consts.StrMdAuthToken,
+			fmt.Sprintf("%s@%s:", placeholder, placeholder) + validPassword,
+			true,
+			"rpc error: code = Unauthenticated desc = email does not exist in db",
+		},
+		{
+			"test with missing email",
+			consts.StrMdBasicAuthHeader,
+			consts.StrBasicAuthPrefix,
+			consts.StrMdAuthToken,
+			":" + validPassword,
 			true,
 			"rpc error: code = Unauthenticated desc = invalid basic auth format",
 		},

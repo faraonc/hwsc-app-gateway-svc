@@ -20,19 +20,19 @@ func TestDisconnect(t *testing.T) {
 		expErrMsg string
 	}{
 		{
-			"test user svc client connection",
+			"test disconnecting user svc client",
 			userSvc,
 			false,
 			"",
 		},
 		{
-			"test document svc client connection",
+			"test disconnecting document svc client",
 			documentSvc,
 			false,
 			"",
 		},
 		{
-			"test file trnsaction svc client client connection",
+			"test disconnecting file trnsaction svc client",
 			fileTransSvc,
 			false,
 			"",

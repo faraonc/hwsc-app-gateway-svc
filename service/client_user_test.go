@@ -8,24 +8,24 @@ import (
 	"testing"
 )
 
-func Test_userDial(t *testing.T) {
+func TestClientUserSvcDial(t *testing.T) {
 	err := userSvc.userSvcConn.Close()
 	assert.Nil(t, err, "test closing connection")
 	err = userSvc.dial()
 	assert.Nil(t, err, "test dialing with after closing connection")
 }
 
-func Test_userGetConnection(t *testing.T) {
+func TestClientUserGetConnection(t *testing.T) {
 	assert.NotNil(t, userSvc.getConnection())
 }
 
-func Test_userGetStatus(t *testing.T) {
+func TestClientUserGetStatus(t *testing.T) {
 	resp, err := userSvc.getStatus()
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
 }
 
-func Test_userCreateUser(t *testing.T) {
+func TestClientUserCreateUser(t *testing.T) {
 	validEmail := randomdata.Email()
 	cases := []struct {
 		desc     string
@@ -92,7 +92,7 @@ func Test_userCreateUser(t *testing.T) {
 	}
 }
 
-func Test_makeNewAuthSecret(t *testing.T) {
+func TestClientMakeNewAuthSecret(t *testing.T) {
 	oldAuthSecret := currAuthSecret
 	assert.Nil(t, userSvc.makeNewAuthSecret())
 	newAuthSecret, err := userSvc.getAuthSecret()
@@ -100,7 +100,7 @@ func Test_makeNewAuthSecret(t *testing.T) {
 	assert.NotEqual(t, oldAuthSecret, newAuthSecret)
 }
 
-func Test_getAuthSecret(t *testing.T) {
+func TestClientGetAuthSecret(t *testing.T) {
 	assert.Nil(t, userSvc.makeNewAuthSecret())
 	newSecret, err := userSvc.getAuthSecret()
 	assert.Nil(t, err)
@@ -108,7 +108,7 @@ func Test_getAuthSecret(t *testing.T) {
 	assert.Equal(t, currAuthSecret, newSecret, "test auth secret is set")
 }
 
-func Test_authenticateUser(t *testing.T) {
+func TestClientAuthenticateUser(t *testing.T) {
 	validEmail := randomdata.Email()
 	validPassword := "Abcd!123@"
 	_, err := userSvc.createUser(
@@ -170,7 +170,7 @@ func Test_authenticateUser(t *testing.T) {
 	}
 }
 
-func Test_verifyAuthToken(t *testing.T) {
+func TestClientVerifyAuthToken(t *testing.T) {
 	validEmail := randomdata.Email()
 	validPassword := "Abcd!123@"
 	resp, err := userSvc.createUser(
@@ -223,6 +223,14 @@ func Test_verifyAuthToken(t *testing.T) {
 			true,
 			"rpc error: code = Unauthenticated desc = no matching auth token were found with given token",
 		},
+		{
+			// cannot really test unless we can somehow insert an auth token in the db
+			// may require user-svc changes
+			"test for expired token",
+			expiredUserToken,
+			true,
+			"rpc error: code = Unauthenticated desc = no matching auth token were found with given token",
+		},
 	}
 	for _, c := range cases {
 		resp, err := userSvc.verifyAuthToken(c.token)
@@ -237,7 +245,7 @@ func Test_verifyAuthToken(t *testing.T) {
 	}
 }
 
-func Test_verifyEmailToken(t *testing.T) {
+func TestClientVerifyEmailToken(t *testing.T) {
 	validCase := "test valid email token"
 	validEmail := randomdata.Email()
 	validPassword := "Abcd!123@"
@@ -268,7 +276,7 @@ func Test_verifyEmailToken(t *testing.T) {
 
 }
 
-func Test_refreshCurrAuthSecret(t *testing.T) {
+func TestClientRefreshCurrAuthSecret(t *testing.T) {
 	cases := []struct {
 		desc     string
 		input    *pblib.Secret
@@ -305,7 +313,7 @@ func Test_refreshCurrAuthSecret(t *testing.T) {
 	}
 }
 
-func Test_replaceCurrAuthSecret(t *testing.T) {
+func TestClientReplaceCurrAuthSecret(t *testing.T) {
 	oldAuthSecret := currAuthSecret
 	assert.Nil(t, userSvc.makeNewAuthSecret())
 	err := userSvc.replaceCurrAuthSecret()
