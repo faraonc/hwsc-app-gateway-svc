@@ -18,6 +18,7 @@ variables:
 
 steps:
   - script: |
+      go version
       mkdir -p '$(GOBIN)'
       mkdir -p '$(GOPATH)/pkg'
       mkdir -p '$(modulePath)'
