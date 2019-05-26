@@ -11,6 +11,8 @@ variables:
     value: '$(GOPATH)/bin' # Go binaries path
   - name: GOPATH
     value: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+  - name: GOROOT
+    value: '/usr/local/go1.12.4' # Go installation path
   - name: modulePath
     value: '$(GOPATH)/$(build.repository.name)'
   - group: hwsc-dev-container-vars
