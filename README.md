@@ -60,7 +60,6 @@ Utility library for hwsc-services.
 - [npm js](https://www.npmjs.com/)
 - [Bootstrap](https://getbootstrap.com/)
 - [MongoDB](https://www.mongodb.com/)
-- [Azure Portal](https://portal.azure.com/)
 - [Google Map API JS](https://developers.google.com/maps/documentation/javascript/tutorial)
 - [gRPC](https://grpc.io/)
 - [protocol buffers](https://developers.google.com/protocol-buffers/docs/proto3)
