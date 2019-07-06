@@ -111,7 +111,7 @@ func TestClientGetAuthSecret(t *testing.T) {
 func TestClientAuthenticateUser(t *testing.T) {
 	validEmail := randomdata.Email()
 	validPassword := "Abcd!123@"
-	_, err := userSvc.createUser(
+	resp, err := userSvc.createUser(
 		&pblib.User{
 			FirstName:    randomdata.FirstName(randomdata.Male),
 			LastName:     randomdata.LastName(),
@@ -119,7 +119,11 @@ func TestClientAuthenticateUser(t *testing.T) {
 			Password:     validPassword,
 			Organization: testOrg,
 		})
-	assert.Nil(t, err, "Test_authenticateUser - create valid user")
+	assert.Nil(t, err, "verify no err for create user")
+	assert.NotNil(t, resp, "verify resp is not nil for create use")
+	emailToken := resp.GetIdentification().GetToken()
+	err = userSvc.verifyEmailToken(emailToken)
+	assert.Nil(t, err, "verify the email")
 	cases := []struct {
 		desc     string
 		email    string
