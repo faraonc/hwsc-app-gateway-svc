@@ -136,8 +136,8 @@ func (s *Service) UpdateUser(ctx context.Context, req *pbsvc.AppGatewayServiceRe
 	}, nil
 }
 
-// GetNewAuthToken looks through users and perform email and password match
-// Returns a token string
+// GetNewAuthToken generates and retrieves a new auth token for the use
+// Returns a new auth token string
 func (s *Service) GetNewAuthToken(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
 	// TODO
 	return &pbsvc.AppGatewayServiceResponse{

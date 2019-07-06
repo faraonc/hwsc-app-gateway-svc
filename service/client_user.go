@@ -267,3 +267,10 @@ func (svc *userService) replaceCurrAuthSecret() error {
 	currAuthSecret = newAuthSecret
 	return nil
 }
+
+// getNewAuthToken generates and retrieves a new auth token for the use
+// Returns a new auth token string
+func (svc *userService) getNewAuthToken(token string) (*pbuser.UserResponse, error) {
+	// TODO
+	return nil, nil
+}
