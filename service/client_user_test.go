@@ -6,6 +6,7 @@ import (
 	"github.com/hwsc-org/hwsc-lib/auth"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 func TestClientUserSvcDial(t *testing.T) {
@@ -323,4 +324,80 @@ func TestClientReplaceCurrAuthSecret(t *testing.T) {
 	err := userSvc.replaceCurrAuthSecret()
 	assert.Nil(t, err)
 	assert.NotEqual(t, oldAuthSecret, currAuthSecret)
+}
+
+func TestGetNewAuthToken(t *testing.T) {
+	validEmail := randomdata.Email()
+	validPassword := "Abcd!123@"
+	resp, err := userSvc.createUser(
+		&pblib.User{
+			FirstName:    randomdata.FirstName(randomdata.Male),
+			LastName:     randomdata.LastName(),
+			Email:        validEmail,
+			Password:     validPassword,
+			Organization: testOrg,
+		})
+	assert.Nil(t, err, "no error creating user")
+	assert.NotNil(t, resp, "response is not nil for creating user")
+	emailToken := resp.GetIdentification().GetToken()
+	err = userSvc.verifyEmailToken(emailToken)
+	assert.Nil(t, err, "no error verifying the email")
+
+	resp, err = userSvc.authenticateUser(validEmail, validPassword)
+	assert.Nil(t, err, "no error authenticating user")
+	assert.NotNil(t, resp, "response is not nil for authenticating user")
+	authToken := resp.GetIdentification().GetToken()
+
+	cases := []struct {
+		desc     string
+		token    string
+		isExpErr bool
+		errStr   string
+	}{
+		{
+			"test for valid auth token",
+			authToken,
+			false,
+			"",
+		},
+		{
+			"test for invalid token type",
+			emailToken,
+			true,
+			"rpc error: code = DeadlineExceeded desc = no matching auth token were found with given token",
+		},
+		{
+			"test for empty string",
+			"",
+			true,
+			"rpc error: code = DeadlineExceeded desc = empty token string",
+		},
+		{
+			"test for fake token",
+			fakeAuthToken,
+			true,
+			"rpc error: code = DeadlineExceeded desc = no matching auth token were found with given token",
+		},
+		{
+			"test for expired token",
+			expiredUserToken,
+			true,
+			"rpc error: code = DeadlineExceeded desc = no matching auth token were found with given token",
+		},
+	}
+	for _, c := range cases {
+		if !c.isExpErr {
+			// need to sleep to get a different token
+			time.Sleep(2 * time.Second)
+		}
+		tokenStr, err := userSvc.getNewAuthToken(c.token)
+		if c.isExpErr {
+			assert.EqualError(t, err, c.errStr, c.desc)
+			assert.Zero(t, tokenStr, c.desc)
+		} else {
+			assert.Nil(t, err, c.desc)
+			assert.NotZero(t, tokenStr, c.desc)
+			assert.NotEqual(t, c.token, tokenStr, c.desc)
+		}
+	}
 }

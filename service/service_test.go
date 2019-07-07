@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/net/context"
 	"testing"
+	"time"
 )
 
 var (
@@ -131,6 +132,96 @@ func TestCreateUser(t *testing.T) {
 			assert.Nil(t, err, c.desc)
 			assert.NotNil(t, resp.GetUser().GetUuid(), c.desc)
 			assert.Equal(t, auth.PermissionStringMap[auth.NoPermission], resp.GetUser().GetPermissionLevel(), c.desc)
+		}
+	}
+}
+
+func TestService_GetNewAuthToken(t *testing.T) {
+	validEmail := randomdata.Email()
+	validPassword := "Abcd!123@"
+	resp, err := userSvc.createUser(
+		&pblib.User{
+			FirstName:    randomdata.FirstName(randomdata.Male),
+			LastName:     randomdata.LastName(),
+			Email:        validEmail,
+			Password:     validPassword,
+			Organization: testOrg,
+		})
+	assert.Nil(t, err, "no error creating user")
+	assert.NotNil(t, resp, "response is not nil for creating user")
+	emailToken := resp.GetIdentification().GetToken()
+	err = userSvc.verifyEmailToken(emailToken)
+	assert.Nil(t, err, "no error verifying the email")
+
+	resp, err = userSvc.authenticateUser(validEmail, validPassword)
+	assert.Nil(t, err, "no error authenticating user")
+	assert.NotNil(t, resp, "response is not nil for authenticating user")
+	authToken := resp.GetIdentification().GetToken()
+	// sleep to ensure a different auth token is generated
+	time.Sleep(2 * time.Second)
+
+	cases := []struct {
+		desc        string
+		authToken   string
+		isExpErr    bool
+		errStr      string
+		serverState state
+	}{
+		{
+			"Test for unavailable service",
+			"",
+			true,
+			"rpc error: code = Unavailable desc = service is unavailable",
+			unavailable,
+		},
+		{
+			"Test for empty string",
+			"",
+			true,
+			"rpc error: code = InvalidArgument desc = nil request",
+			available,
+		},
+		{
+			"Test for invalid token type",
+			fakeAuthToken,
+			true,
+			"rpc error: code = DeadlineExceeded desc = no matching auth token were found with given token",
+			available,
+		},
+		{
+			"Test for expired token",
+			expiredUserToken,
+			true,
+			"rpc error: code = DeadlineExceeded desc = no matching auth token were found with given token",
+			available,
+		},
+		{
+			"Test for valid token",
+			authToken,
+			false,
+			"",
+			available,
+		},
+	}
+
+	for _, c := range cases {
+		serviceStateLocker.currentServiceState = c.serverState
+		s := Service{}
+		resp, err := s.GetNewAuthToken(context.TODO(), &pbsvc.AppGatewayServiceRequest{
+			UserRequest: &pbuser.UserRequest{
+				Identification: &pblib.Identification{
+					Token: c.authToken,
+				},
+			},
+		})
+		if c.isExpErr {
+			assert.Nil(t, resp, c.desc)
+			assert.EqualError(t, err, c.errStr, c.desc)
+		} else {
+			assert.Nil(t, err, c.desc)
+			assert.NotNil(t, resp, c.desc)
+			assert.NotZero(t, resp.GetToken(), c.desc)
+			assert.NotEqual(t, c.authToken, resp.GetToken(), c.desc)
 		}
 	}
 }

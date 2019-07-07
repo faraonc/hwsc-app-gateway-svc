@@ -267,3 +267,32 @@ func (svc *userService) replaceCurrAuthSecret() error {
 	currAuthSecret = newAuthSecret
 	return nil
 }
+
+// getNewAuthToken generates and retrieves a new auth token for the use
+// Returns a new auth token string
+func (svc *userService) getNewAuthToken(token string) (string, error) {
+	if err := refreshConnection(svc, consts.UserClientTag); err != nil {
+		return "", err
+	}
+	// not guaranteed that we are connected, but return the error and try reconnecting again later
+	resp, err := svc.client.GetNewAuthToken(
+		context.TODO(),
+		&pbuser.UserRequest{
+			Identification: &lib.Identification{
+				Token: token,
+			},
+		},
+	)
+	if err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return "", err
+	}
+	id := resp.GetIdentification()
+	newSecret := id.GetSecret()
+	if err := auth.ValidateSecret(newSecret); err != nil {
+		log.Error(consts.UserClientTag, err.Error())
+		return "", err
+	}
+	currAuthSecret = newSecret
+	return id.GetToken(), nil
+}

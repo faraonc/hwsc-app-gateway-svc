@@ -136,13 +136,31 @@ func (s *Service) UpdateUser(ctx context.Context, req *pbsvc.AppGatewayServiceRe
 	}, nil
 }
 
-// GetNewAuthToken looks through users and perform email and password match
-// Returns a token string
+// GetNewAuthToken generates and retrieves a new auth token for the user
+// Returns a new auth token string
 func (s *Service) GetNewAuthToken(ctx context.Context, req *pbsvc.AppGatewayServiceRequest) (*pbsvc.AppGatewayServiceResponse, error) {
-	// TODO
+	log.RequestService("GetNewAuthToken")
+
+	if ok := isStateAvailable(); !ok {
+		log.Info(consts.AppGatewayServiceTag, consts.ErrServiceUnavailable.Error())
+		return nil, status.Error(codes.Unavailable, consts.ErrServiceUnavailable.Error())
+	}
+
+	if req == nil || req.GetUserRequest() == nil || req.GetUserRequest().GetIdentification() == nil ||
+		req.GetUserRequest().GetIdentification().GetToken() == "" {
+		log.Error(consts.AppGatewayServiceTag, consts.ErrNilRequest.Error())
+		return nil, status.Error(codes.InvalidArgument, consts.ErrNilRequest.Error())
+	}
+	authToken, err := userSvc.getNewAuthToken(req.GetUserRequest().GetIdentification().GetToken())
+	if err != nil {
+		log.Error(consts.AppGatewayServiceTag, err.Error())
+		return nil, err
+	}
+
 	return &pbsvc.AppGatewayServiceResponse{
 		Status:  &pbsvc.AppGatewayServiceResponse_Code{Code: uint32(codes.OK)},
 		Message: codes.OK.String(),
+		Token:   authToken,
 	}, nil
 }
 
