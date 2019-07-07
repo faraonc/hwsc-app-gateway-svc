@@ -239,12 +239,12 @@ func TestClientVerifyAuthToken(t *testing.T) {
 	for _, c := range cases {
 		resp, err := userSvc.verifyAuthToken(c.token)
 		if c.isExpErr {
-			assert.EqualError(t, err, c.errStr)
-			assert.Nil(t, resp)
+			assert.EqualError(t, err, c.errStr, c.desc)
+			assert.Nil(t, resp, c.desc)
 		} else {
-			assert.Nil(t, err)
-			assert.Equal(t, c.token, resp.GetIdentification().GetToken())
-			assert.Equal(t, authSecret, resp.GetIdentification().GetSecret())
+			assert.Nil(t, err, c.desc)
+			assert.Equal(t, c.token, resp.GetIdentification().GetToken(), c.desc)
+			assert.Equal(t, authSecret, resp.GetIdentification().GetSecret(), c.desc)
 		}
 	}
 }
@@ -261,12 +261,12 @@ func TestClientVerifyEmailToken(t *testing.T) {
 			Password:     validPassword,
 			Organization: testOrg,
 		})
-	assert.Nil(t, err, validCase)
-	assert.NotNil(t, resp, validCase)
+	assert.Nil(t, err, validCase, "verify creating user has no error")
+	assert.NotNil(t, resp, validCase, "verify creating user yields a valid response")
 
 	emailToken := resp.GetIdentification().GetToken()
 	expNilErr := userSvc.verifyEmailToken(emailToken)
-	assert.Nil(t, expNilErr, validCase)
+	assert.Nil(t, expNilErr, validCase, "verify email token has no error")
 
 	expErr := userSvc.verifyEmailToken(emailToken)
 	assert.EqualError(t, expErr,
